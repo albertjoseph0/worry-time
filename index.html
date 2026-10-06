@@ -460,7 +460,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
   function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 
   /* ===================== Constants ===================== */
-  const STEPS = ['Settle in', 'Write', 'Sort', 'Answer', 'Put away'];
+  const STEPS = ['Settle in', 'Write', 'Sort', 'Plan', 'Put away'];
   const KINDS = {
     step:    { label: 'Next step', help: 'The best step toward a solution. If you are not sure what the solution is, write a small step toward one.', ph: 'For example: Call the bank at 9 and ask about a payment plan.' },
     todo:    { label: 'To-do', help: 'Small worries just need to go on the to-do list.', ph: 'What to do, and when. For example: Pay the phone bill online before work.' },
@@ -570,7 +570,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
       status = `<div class="notice ok">
         <strong>Worry time is done for tonight.</strong>
         <p>${n ? `${plural(n, 'card')} put away at ${fmtClock(last.endedAt)}.` : `Finished at ${fmtClock(last.endedAt)}.`} If a worry comes back in bed, tell yourself:</p>
-        <p><q>I dealt with that this evening. The answer is written down.</q></p>
+        <p><q>I dealt with that this evening. The plan is written down.</q></p>
         <div class="row"><a class="btn small" href="#bedside">Open the bedside card</a></div>
       </div>`;
     } else if (late) {
@@ -610,7 +610,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
         <li><h3>Settle in</h3><p>Go to a quiet room. Ask not to be disturbed, not even for calls.</p></li>
         <li><h3>Write</h3><p>One worry per card, big or small, until no more come. About 10–15 minutes.</p></li>
         <li><h3>Sort</h3><p>Group the cards into three to seven piles: money, work, family, little things.</p></li>
-        <li><h3>Answer</h3><p>At the bottom of each card, write the best next step, or that it’s out of your control.</p></li>
+        <li><h3>Plan</h3><p>At the bottom of each card, write what you’ll do about it: the best next step, or that it’s out of your control.</p></li>
         <li><h3>Put away</h3><p>The work of worrying is done. Check the cards in the morning and follow up.</p></li>
       </ol>
     </section>
@@ -618,11 +618,11 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     <section class="notes">
       <div class="note-block">
         <h3>The worst possible scenario</h3>
-        <p>For any card, ask: what is the worst thing that could happen? Could I stand it? What would I do? If it’s something you couldn’t handle, the answer is a plan to get help. Each card has room for this.</p>
+        <p>For any card, ask: what is the worst thing that could happen? Could I stand it? What would I do? If it’s something you couldn’t handle, make a plan to get help. Each card has room for this.</p>
       </div>
       <div class="note-block">
-        <h3>When an answer doesn’t work</h3>
-        <p>Mark it in the morning and the card comes back the next evening, with what you tried. A wrong first answer still leaves you one option closer. If a worry keeps returning, think it through again or talk to a counselor.</p>
+        <h3>When a plan doesn’t work</h3>
+        <p>Mark it in the morning and the card comes back the next evening, with what you tried. A plan that fails still leaves you one option closer. If a worry keeps returning, think it through again or talk to a counselor.</p>
       </div>
       <blockquote class="quote">I have worried about thousands of things in my life, most of which never happened.<cite>Mark Twain, quoted in the book</cite></blockquote>
     </section>`;
@@ -722,7 +722,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           ${top ? `
             <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry editable" ${editAttrs(top)}>${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
             <p class="hint">Which pile does this go in?</p>`
-          : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p><div class="row"><button class="btn small primary" data-act="go" data-step="4">Answer each card</button></div></div>`}
+          : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, decide what you’ll do about each one.</p><div class="row"><button class="btn small primary" data-act="go" data-step="4">Plan each card</button></div></div>`}
           ${S.piles.length ? `<div class="pile-buttons">${S.piles.map(p => {
             const n = cards.filter(c => c.pile === p.id).length;
             return `<span class="pb">${top
@@ -749,7 +749,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
       </div>
       <div class="step-foot">
         <button class="btn quiet" data-act="go" data-step="2">Back to writing</button>
-        <button class="btn primary" data-act="go" data-step="4" ${unsorted.length ? 'disabled' : ''}>${unsorted.length ? `Sort ${plural(unsorted.length, 'more card')} first` : 'Answer each card'}</button>
+        <button class="btn primary" data-act="go" data-step="4" ${unsorted.length ? 'disabled' : ''}>${unsorted.length ? `Sort ${plural(unsorted.length, 'more card')} first` : 'Plan each card'}</button>
       </div>`;
   }
 
@@ -761,11 +761,11 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
       <div class="icard-head"><span class="tag">${esc(pileName(c.pile))}</span><p class="worry editable" ${editAttrs(c)}>${esc(c.text)}</p>${cardBadges(c) ? `<span>${cardBadges(c)}</span>` : ''}</div>
       ${c.history.length ? `<div class="tried">${c.history.map(h => `<span>Tried: <s>${esc(h.solution)}</s>${h.note ? ` · ${esc(h.note)}` : ''}</span>`).join('')}<span>That’s one less option to consider. Try something else, or get advice.</span></div>` : ''}
       ${c.history.length >= 2 ? `<p class="counsel">This one keeps coming back. Think it through again from the start, or talk it over with a counselor or someone you trust.</p>` : ''}
-      <div class="kinds" role="group" aria-label="What kind of answer">${Object.entries(KINDS).map(([key, v]) => `<button class="chip" data-act="kind" data-id="${c.id}" data-kind="${key}" aria-pressed="${k === key}">${v.label}</button>`).join('')}</div>
+      <div class="kinds" role="group" aria-label="What kind of plan">${Object.entries(KINDS).map(([key, v]) => `<button class="chip" data-act="kind" data-id="${c.id}" data-kind="${key}" aria-pressed="${k === key}">${v.label}</button>`).join('')}</div>
       <p class="kind-help">${esc(KINDS[k].help)}</p>
       ${k === 'control' ? `<div class="phrases">${CONTROL_PHRASES.map((p, i) => `<button data-act="phrase" data-id="${c.id}" data-i="${i}">${esc(p)}${p.endsWith(' ') ? '…' : ''}</button>`).join('')}</div>` : ''}
       <div class="icard-lines" style="background:none">
-        <label class="sr" for="sol-${c.id}">Answer for: ${esc(c.text)}</label>
+        <label class="sr" for="sol-${c.id}">Plan for: ${esc(c.text)}</label>
         <textarea id="sol-${c.id}" class="ruled-input" rows="3" data-field="solution" data-id="${c.id}" placeholder="${esc(KINDS[k].ph)}">${esc(c.solution)}</textarea>
       </div>
       <details class="worst" data-id="${c.id}" ${c.worstOpen ? 'open' : ''}>
@@ -785,8 +785,8 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     const groups = S.piles.map(p => ({ p, cs: cards.filter(c => c.pile === p.id) })).filter(g => g.cs.length);
     return `
       <div class="step-head">
-        <h2>Write an answer at the bottom of each card</h2>
-        <p class="lead">Think about each pile and what you can do. Write the step down; don’t just keep it in your head. That written note is a contract with yourself, and it’s what lets you put the worry away. Even an imperfect answer beats doing nothing.</p>
+        <h2>Decide what you’ll do about each worry</h2>
+        <p class="lead">Go through each pile and, at the bottom of each card, write your plan: the best next step, a to-do, what you’ll say to someone, or a note that it’s out of your control. Write it down; don’t just keep it in your head. That written plan is a contract with yourself, and it’s what lets you put the worry away. Even an imperfect plan beats doing nothing.</p>
         <div class="progress" id="progress">${progressInner(done, cards.length)}</div>
       </div>
       ${groups.map(g => `<section class="pile-section"><h3>${esc(g.p.name)} <small>${plural(g.cs.length, 'card')}</small></h3><div class="answer-grid">${g.cs.map(fullCard).join('')}</div></section>`).join('')}
@@ -795,8 +795,8 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
         <div class="row"><span class="hint" id="leftHint">${leftHint(cards.length - done)}</span><button class="btn primary" data-act="putAway">Put them away</button></div>
       </div>`;
   }
-  const progressInner = (d, n) => `<span>${d} of ${n} answered</span><span class="track" aria-hidden="true"><span class="fill" style="width:${n ? Math.round(d / n * 100) : 0}%"></span></span>`;
-  const leftHint = left => left ? `${plural(left, 'card')} without an answer will wait for next time.` : 'Every card has an answer.';
+  const progressInner = (d, n) => `<span>${d} of ${n} planned</span><span class="track" aria-hidden="true"><span class="fill" style="width:${n ? Math.round(d / n * 100) : 0}%"></span></span>`;
+  const leftHint = left => left ? `${plural(left, 'card')} without a plan will wait for next time.` : 'Every card has a plan.';
 
   function stepPutAway(s) {
     const cards = S.cards.filter(c => c.sessionId === s.id);
@@ -813,7 +813,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
         <div class="stack">
           <h2>Your worrying is done for tonight.</h2>
           <p class="lead">${set.length ? `You faced ${plural(set.length, 'worry', 'worries')} squarely and wrote down what to do about each one.` : 'You took the time to sit with whatever came up.'} If one comes back in bed, tell it:</p>
-          <p class="quote" style="font-family:var(--f-hand);font-size:1.35rem">“I dealt with that this evening. The answer is written down. Go away.”</p>
+          <p class="quote" style="font-family:var(--f-hand);font-size:1.35rem">“I dealt with that this evening. The plan is written down. Go away.”</p>
           ${set.length ? `<ul class="tally">${Object.entries(counts).map(([k, n]) => `<li>${n} ${label[k][n === 1 ? 0 : 1]}</li>`).join('')}${waiting.length ? `<li>${waiting.length} waiting for next time</li>` : ''}</ul>` : ''}
           <p class="hint" style="max-width:60ch">If a new worry turns up later, put it on the bedside card. Check your cards in the morning and follow up.</p>
           <div class="row"><a class="btn primary" href="#bedside">Open the bedside card</a><a class="btn" href="#morning">See the morning list</a><button class="btn quiet" data-act="closePutaway">Done</button></div>
@@ -862,13 +862,13 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           <div class="row"><button class="btn small primary" type="submit">Bring it back tonight</button><button class="btn small quiet" type="button" data-act="retryOpen" data-id="${c.id}">Cancel</button></div>
         </form>` : ''}
       </article>`).join('')}</div>`
-      : `<p class="empty">No cards to follow up on. After your next worry time, the answers you write will show up here in the morning.</p>`;
+      : `<p class="empty">No cards to follow up on. After your next worry time, the plans you write will show up here in the morning.</p>`;
 
     return `
       <section class="stack">
         <p class="eyebrow">${esc(new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }))}</p>
         <h1>Follow up on last night’s cards</h1>
-        <p class="lead">These are the answers you wrote while you were thinking clearly. Do the things on your cards. If an answer doesn’t work, mark it and the card comes back tonight.</p>
+        <p class="lead">These are the plans you made while you were thinking clearly. Do the things on your cards. If a plan doesn’t work, mark it and the card comes back tonight.</p>
       </section>
       <div class="two">
         <section class="stack">
@@ -885,7 +885,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           </div>
           <div class="panel">
             <h3>Waiting for tonight</h3>
-            ${waiting.length ? `<ul class="donelist">${waiting.map(c => `<li><span style="color:var(--ink-2);overflow-wrap:anywhere;min-width:0">${esc(c.text)}</span></li>`).join('')}</ul>` : '<p class="hint">Nothing yet. Cards from the bedside card and answers that didn’t work end up here.</p>'}
+            ${waiting.length ? `<ul class="donelist">${waiting.map(c => `<li><span style="color:var(--ink-2);overflow-wrap:anywhere;min-width:0">${esc(c.text)}</span></li>`).join('')}</ul>` : '<p class="hint">Nothing yet. Cards from the bedside card and plans that didn’t work end up here.</p>'}
           </div>
         </aside>
       </div>`;
@@ -910,7 +910,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
          </form>`;
     return `<section class="bedside">
       ${body}
-      ${handled ? `<p>This evening you worked through ${plural(handled, 'worry', 'worries')}. Their answers are written down.</p>` : ''}
+      ${handled ? `<p>This evening you worked through ${plural(handled, 'worry', 'worries')}. Their plans are written down.</p>` : ''}
       <p class="tiny">This screen stays dim on purpose. Your cards aren’t shown here, so there’s nothing to stir up.</p>
     </section>`;
   }
