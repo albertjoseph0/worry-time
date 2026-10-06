@@ -262,7 +262,15 @@ main > * + * { margin-top: 2.5rem; }
 .piles { display: flex; flex-direction: column; gap: 1rem; }
 .pile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .85rem 1rem; display: flex; flex-direction: column; gap: .6rem; }
 .pile-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
-.pile-head h3 { font-size: 1.1rem; }
+.pile-head h3 { font-size: 1.1rem; overflow-wrap: anywhere; min-width: 0; }
+.pile-del {
+  font: inherit; font-size: 1.15rem; line-height: 1; width: 1.9rem; height: 1.9rem; flex: none; display: inline-grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer;
+  opacity: 0; transition: opacity .15s ease, background-color .15s ease;
+}
+.pile:hover .pile-del, .pile:focus-within .pile-del, .pile-del:focus-visible { opacity: 1; }
+.pile-del:hover { background: color-mix(in srgb, var(--rule-red) 18%, transparent); color: var(--ink); }
+@media (hover: none) { .pile-del { opacity: 1; } }
 .pile-cards { display: flex; flex-wrap: wrap; gap: .4rem; }
 .pcard {
   font-family: var(--f-hand); font-size: 1rem; background: var(--card); color: var(--card-ink); border-top: 2px solid var(--rule-red);
@@ -720,7 +728,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           ${S.piles.map(p => {
             const pc = cards.filter(c => c.pile === p.id);
             return `<div class="pile">
-              <div class="pile-head"><h3>${esc(p.name)}</h3><span class="row" style="gap:.25rem"><span class="hint">${pc.length}</span>${!p.fixed && !pc.length ? `<button class="x" data-act="delPile" data-pile="${p.id}" aria-label="Delete pile ${esc(p.name)}">Delete</button>` : ''}</span></div>
+              <div class="pile-head"><h3>${esc(p.name)}</h3><span class="row" style="gap:.25rem"><span class="hint">${pc.length}</span>${!p.fixed ? `<button class="pile-del" data-act="delPile" data-pile="${p.id}" title="Delete pile${pc.length ? ' and re-sort its cards' : ''}" aria-label="Delete pile ${esc(p.name)}${pc.length ? ` and send its ${plural(pc.length, 'card')} back to be sorted` : ''}">×</button>` : '<span class="pile-del" aria-hidden="true" style="visibility:hidden"></span>'}</span></div>
               ${pc.length ? `<div class="pile-cards">${pc.map(c => `<span class="pcard"><span class="editable" ${editAttrs(c)}>${esc(c.text)}</span><button class="x" data-act="unsort" data-id="${c.id}" aria-label="Move to another pile: ${esc(c.text)}">Move</button></span>`).join('')}</div>` : ''}
             </div>`;
           }).join('')}
@@ -1126,7 +1134,16 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     },
     unsort: b => { const c = cardById(b.dataset.id); if (c) { c.pile = null; save(); render(); } },
     ideaPile: b => addPile(b.dataset.name),
-    delPile: b => { S.piles = S.piles.filter(p => p.id !== b.dataset.pile || p.fixed); save(); render(); },
+    delPile: b => {
+      const pile = pileById(b.dataset.pile); if (!pile || pile.fixed) return;
+      const s = currentSession();
+      const back = s ? activeCards(s).filter(c => c.pile === pile.id).length : 0;
+      // Every card that pointed at this pile goes back to unsorted, including ones from earlier sessions.
+      S.cards.forEach(c => { if (c.pile === pile.id) c.pile = null; });
+      S.piles = S.piles.filter(p => p.id !== pile.id);
+      save(); render();
+      toast(back ? `Deleted “${pile.name}”. ${plural(back, 'card is', 'cards are')} back in the queue to sort.` : `Deleted “${pile.name}”.`);
+    },
     kind: b => { const c = cardById(b.dataset.id); if (!c) return; c.kind = b.dataset.kind; save(); ui.focus = `#sol-${c.id}`; render(); },
     phrase: b => {
       const c = cardById(b.dataset.id); if (!c) return;
