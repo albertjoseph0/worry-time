@@ -722,7 +722,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           ${top ? `
             <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry editable" ${editAttrs(top)}>${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
             <p class="hint">Which pile does this go in?</p>`
-          : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p></div>`}
+          : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p><div class="row"><button class="btn small primary" data-act="go" data-step="4">Answer each card</button></div></div>`}
           ${S.piles.length ? `<div class="pile-buttons">${S.piles.map(p => {
             const n = cards.filter(c => c.pile === p.id).length;
             return `<span class="pb">${top
