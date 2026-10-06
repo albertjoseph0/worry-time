@@ -264,12 +264,19 @@ main > * + * { margin-top: 2.5rem; }
 .pile-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
 .pile-head h3 { font-size: 1.1rem; }
 .pile-cards { display: flex; flex-wrap: wrap; gap: .4rem; }
-.pile-cards button {
-  font-family: var(--f-hand); font-size: 1rem; background: var(--card); color: var(--card-ink); border: 0; border-top: 2px solid var(--rule-red);
-  border-radius: 2px; padding: .25rem .6rem; cursor: pointer; box-shadow: 0 1px 2px var(--shadow); max-width: 100%; text-align: left; overflow-wrap: anywhere;
+.pcard {
+  font-family: var(--f-hand); font-size: 1rem; background: var(--card); color: var(--card-ink); border-top: 2px solid var(--rule-red);
+  border-radius: 2px; padding: .2rem .25rem .2rem .6rem; box-shadow: 0 1px 2px var(--shadow); max-width: 100%;
+  display: inline-flex; align-items: baseline; gap: .25rem; min-width: 0;
 }
-.pile-cards button:hover { text-decoration: line-through; text-decoration-color: var(--rule-red); }
-.meter { font-size: var(--t-sm); display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.pcard .editable { overflow-wrap: anywhere; min-width: 1ch; }
+.pcard .x { padding: .15rem .4rem; }
+/* Click-to-edit worry text */
+.editable { cursor: text; border-radius: 3px; white-space: pre-wrap; outline: none; transition: background-color .15s ease; }
+.editable:hover { background: color-mix(in srgb, var(--rule-blue) 28%, transparent); }
+.editable:focus { background: color-mix(in srgb, var(--rule-blue) 34%, transparent); box-shadow: 0 0 0 2px var(--pen); }
+.meter { font-size: var(--t-sm); display: flex; gap: .5rem; align-items: baseline; }
+.meter .dot { flex: none; }
 .dot { width: .6rem; height: .6rem; border-radius: 50%; display: inline-block; background: var(--ok); }
 .dot.warn { background: var(--warn); }
 
@@ -482,6 +489,9 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
   const currentSession = () => S.current ? sessionById(S.current) : null;
   const activeCards = s => S.cards.filter(c => c.sessionId === s.id && c.status === 'active');
   const answered = c => c.solution && c.solution.trim().length > 0;
+  // Worry text is edited in place. Prefer plain-text editing so pasted formatting never gets in.
+  const CE = (() => { const d = document.createElement('div'); d.contentEditable = 'plaintext-only'; return d.contentEditable === 'plaintext-only' ? 'plaintext-only' : 'true'; })();
+  const editAttrs = c => `contenteditable="${CE}" role="textbox" spellcheck="true" aria-label="Edit worry" title="Click to edit" data-edit="text" data-id="${c.id}"`;
 
   /* ===================== UI state (not saved) ===================== */
   const ui = { putaway: null, checks: {}, retryOpen: {}, bedsideSaved: false, confirmClear: false, confirmEnd: false, copyText: null, focus: null, logDraft: null };
@@ -658,11 +668,11 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           <label class="sr" for="newCard">Worry</label>
           <textarea id="newCard" class="ruled-input" rows="2" placeholder="What’s on your mind?"></textarea>
         </div>
-        <div class="actions"><span class="hint">Enter adds the card. Shift+Enter starts a new line.</span><button class="btn small primary" type="submit">Add card</button></div>
+        <div class="actions"><span class="hint">Enter adds the card. Shift+Enter starts a new line. Click a card’s text to edit it.</span><button class="btn small primary" type="submit">Add card</button></div>
       </form>
       ${cards.length ? `<div class="card-grid">${cards.slice().reverse().map(c => `
         <article class="icard mini">
-          <div class="icard-head"><p class="worry">${esc(c.text)}</p></div>
+          <div class="icard-head"><p class="worry editable" ${editAttrs(c)}>${esc(c.text)}</p></div>
           <div class="foot"><span>${cardBadges(c)}</span><button class="x" data-act="delCard" data-id="${c.id}" aria-label="Remove card: ${esc(c.text)}">Remove</button></div>
         </article>`).join('')}</div>` : ''}
       <div class="step-foot">
@@ -690,12 +700,12 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     return `
       <div class="step-head">
         <h2>Sort the cards into piles</h2>
-        <p class="lead">Group them by subject (money, work, family) or by size (little, big, silly), whatever suits you. Little things become a to-do list. Sorting already starts to put the worries under your control.</p>
+        <p class="lead">Group them by subject (money, work, family) or by size (little, big, silly), whatever suits you. Little things become a to-do list. Sorting already starts to put the worries under your control. Click any card’s text to reword it.</p>
       </div>
       <div class="sorter">
         <div class="sort-top">
           ${top ? `
-            <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry">${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
+            <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry editable" ${editAttrs(top)}>${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
             <p class="hint">Which pile does this go in?</p>
             <div class="pile-buttons">${S.piles.map(p => `<button class="btn" data-act="toPile" data-id="${top.id}" data-pile="${p.id}">${esc(p.name)}</button>`).join('')}</div>`
           : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p></div>`}
@@ -711,7 +721,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
             const pc = cards.filter(c => c.pile === p.id);
             return `<div class="pile">
               <div class="pile-head"><h3>${esc(p.name)}</h3><span class="row" style="gap:.25rem"><span class="hint">${pc.length}</span>${!p.fixed && !pc.length ? `<button class="x" data-act="delPile" data-pile="${p.id}" aria-label="Delete pile ${esc(p.name)}">Delete</button>` : ''}</span></div>
-              ${pc.length ? `<div class="pile-cards">${pc.map(c => `<button data-act="unsort" data-id="${c.id}" title="Take this card back out">${esc(c.text)}</button>`).join('')}</div>` : ''}
+              ${pc.length ? `<div class="pile-cards">${pc.map(c => `<span class="pcard"><span class="editable" ${editAttrs(c)}>${esc(c.text)}</span><button class="x" data-act="unsort" data-id="${c.id}" aria-label="Move to another pile: ${esc(c.text)}">Move</button></span>`).join('')}</div>` : ''}
             </div>`;
           }).join('')}
           <p class="meter">${meter}</p>
@@ -728,7 +738,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     const w = c.worst || {};
     const last = c.history[c.history.length - 1];
     return `<article class="icard full" data-card="${c.id}">
-      <div class="icard-head"><span class="tag">${esc(pileName(c.pile))}</span><p class="worry">${esc(c.text)}</p>${cardBadges(c) ? `<span>${cardBadges(c)}</span>` : ''}</div>
+      <div class="icard-head"><span class="tag">${esc(pileName(c.pile))}</span><p class="worry editable" ${editAttrs(c)}>${esc(c.text)}</p>${cardBadges(c) ? `<span>${cardBadges(c)}</span>` : ''}</div>
       ${c.history.length ? `<div class="tried">${c.history.map(h => `<span>Tried: <s>${esc(h.solution)}</s>${h.note ? ` · ${esc(h.note)}` : ''}</span>`).join('')}<span>That’s one less option to consider. Try something else, or get advice.</span></div>` : ''}
       ${c.history.length >= 2 ? `<p class="counsel">This one keeps coming back. Think it through again from the start, or talk it over with a counselor or someone you trust.</p>` : ''}
       <div class="kinds" role="group" aria-label="What kind of answer">${Object.entries(KINDS).map(([key, v]) => `<button class="chip" data-act="kind" data-id="${c.id}" data-kind="${key}" aria-pressed="${k === key}">${v.label}</button>`).join('')}</div>
@@ -1215,12 +1225,34 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     if (fn) fn(e.target);
   });
   app.addEventListener('keydown', e => {
+    if (editCard(e.target)) {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); e.target.blur(); }
+      else if (e.key === 'Escape') { e.target.textContent = e.target.dataset.orig || ''; e.target.blur(); }
+      return;
+    }
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && (e.target.id === 'newCard' || e.target.id === 'bedText')) {
       e.preventDefault(); e.target.form.requestSubmit();
     }
   });
+  const editCard = t => t && t.dataset && t.dataset.edit === 'text' ? cardById(t.dataset.id) : null;
+  app.addEventListener('focusin', e => { const c = editCard(e.target); if (c) e.target.dataset.orig = c.text; });
+  app.addEventListener('focusout', e => {
+    const t = e.target, c = editCard(t); if (!c) return;
+    const v = t.textContent.trim();
+    if (!v) { c.text = t.dataset.orig || c.text; toast('A card can’t be blank, so the old wording is back.'); }
+    else c.text = v;
+    t.textContent = c.text;
+    save();
+  });
+  app.addEventListener('paste', e => {
+    if (!editCard(e.target) || CE === 'plaintext-only') return;
+    e.preventDefault();
+    document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
+  });
   app.addEventListener('input', e => {
     const t = e.target;
+    const ec = editCard(t);
+    if (ec) { ec.text = t.textContent; saveSoon(); return; }
     const f = t.dataset.field;
     if (f === 'solution' || (f && f.startsWith('worst.'))) {
       const c = cardById(t.dataset.id); if (!c) return;
