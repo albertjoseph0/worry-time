@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Worry Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Kalam:wght@400;700&family=Young+Serif&display=swap">
+<style>
+/* Layout: one calm column on a blue-grey evening "desk". Index cards are the only paper objects on it. */
+:root {
+  --desk: #E2E7EE;
+  --surface: #F3F5F8;
+  --ink: #1D2333;
+  --ink-2: #465068;
+  --muted: #646D82;
+  --line: #C9D1DD;
+  --pen: #2F4A94;
+  --pen-ink: #FFFFFF;
+  --pen-soft: #DCE3F4;
+  --card: #FBFAF6;
+  --card-ink: #262B3B;
+  --card-muted: #6A6F7E;
+  --rule-red: #D86479;
+  --rule-blue: #B4C7E0;
+  --shadow: rgba(29, 35, 51, .18);
+  --ok: #2E7D5B;
+  --ok-soft: #DCEFE5;
+  --warn: #8A5610;
+  --warn-soft: #F6E8D2;
+  --s-with: #3D5BA9;
+  --s-without: #C0803A;
+  --grid: #D6DCE5;
+
+  --f-display: "Young Serif", Georgia, "Times New Roman", serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-hand: "Kalam", "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+
+  --t-xs: .8125rem;
+  --t-sm: .9375rem;
+  --t-md: 1.0625rem;
+  --t-lg: 1.375rem;
+  --t-xl: 1.875rem;
+  --t-2xl: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  --lh-card: 1.85rem;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #141824; --surface: #1E2433; --ink: #E3E6EE; --ink-2: #B4BBCB; --muted: #8D95A9; --line: #323A50;
+    --pen: #93A8E6; --pen-ink: #10141F; --pen-soft: #28314A;
+    --card: #E4E0D4; --card-ink: #232733; --card-muted: #5B5F6C; --rule-red: #C4566C; --rule-blue: #A3B5CF;
+    --shadow: rgba(0, 0, 0, .5); --ok: #6BC39A; --ok-soft: #1B3329; --warn: #E0A54F; --warn-soft: #3A2C17;
+    --s-with: #6F8AD4; --s-without: #B37E3E; --grid: #2C3346;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #141824; --surface: #1E2433; --ink: #E3E6EE; --ink-2: #B4BBCB; --muted: #8D95A9; --line: #323A50;
+  --pen: #93A8E6; --pen-ink: #10141F; --pen-soft: #28314A;
+  --card: #E4E0D4; --card-ink: #232733; --card-muted: #5B5F6C; --rule-red: #C4566C; --rule-blue: #A3B5CF;
+  --shadow: rgba(0, 0, 0, .5); --ok: #6BC39A; --ok-soft: #1B3329; --warn: #E0A54F; --warn-soft: #3A2C17;
+  --s-with: #6F8AD4; --s-without: #B37E3E; --grid: #2C3346;
+  color-scheme: dark;
+}
+/* Bedside mode: deliberately dim and warm whatever the theme, so it can be used at 3 A.M. */
+:root.night {
+  --desk: #0A0907; --surface: #12100C; --ink: #9C8263; --ink-2: #7E6A51; --muted: #5E5040; --line: #2A241B;
+  --pen: #7A5E38; --pen-ink: #0A0907; --pen-soft: #1C1810;
+  --card: #17140F; --card-ink: #A88C66; --card-muted: #6E5D47; --rule-red: #4A2A2A; --rule-blue: #26221C;
+  --shadow: rgba(0, 0, 0, .6); --ok: #8C7A55; --ok-soft: #1C1810; --warn: #9C8263; --warn-soft: #1C1810;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-md);
+  line-height: 1.55;
+  transition: background-color .4s ease, color .4s ease;
+}
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.15; text-wrap: balance; margin: 0; letter-spacing: -.005em; }
+h1 { font-size: var(--t-2xl); }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-lg); }
+p { margin: 0; }
+a { color: var(--pen); }
+:focus-visible { outline: 3px solid var(--pen); outline-offset: 2px; border-radius: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.eyebrow { font-size: var(--t-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.lead { font-size: var(--t-md); color: var(--ink-2); max-width: 62ch; }
+.hint { font-size: var(--t-sm); color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--desk) 88%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner { max-width: 960px; margin: 0 auto; padding: .6rem 16px; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; }
+.brand { font-family: var(--f-display); font-size: 1.25rem; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: .55rem; }
+.brand-mark { width: 26px; height: 18px; border-radius: 2px; background: var(--card); box-shadow: 0 1px 3px var(--shadow); position: relative; flex: none; }
+.brand-mark::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 1.5px; background: var(--rule-red); }
+.brand-mark::after { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 1px; background: var(--rule-blue); box-shadow: 0 4px 0 var(--rule-blue); }
+.tabs { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: none; margin-left: auto; max-width: 100%; }
+.tabs a { white-space: nowrap; text-decoration: none; color: var(--ink-2); font-size: var(--t-sm); padding: .4rem .7rem; border-radius: 999px; }
+.tabs a:hover { background: var(--pen-soft); color: var(--ink); }
+.tabs a[aria-current="page"] { background: var(--ink); color: var(--desk); }
+@media (max-width: 560px) { .tabs { margin-left: 0; width: 100%; } }
+
+main { max-width: 960px; margin: 0 auto; padding-inline: 16px; padding-block: 2rem 4rem; outline: none; }
+main > * + * { margin-top: 2.5rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit; font-size: var(--t-sm); font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  padding: .7rem 1.15rem; border-radius: 999px; border: 1.5px solid var(--pen);
+  background: transparent; color: var(--pen); text-decoration: none; line-height: 1.2;
+  transition: background-color .15s ease, transform .15s ease;
+}
+.btn:hover { background: var(--pen-soft); }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--pen); color: var(--pen-ink); }
+.btn.primary:hover { background: color-mix(in srgb, var(--pen) 86%, var(--ink)); }
+.btn.quiet { border-color: transparent; color: var(--ink-2); padding-inline: .6rem; }
+.btn.quiet:hover { background: var(--pen-soft); }
+.btn.small { padding: .4rem .8rem; font-size: var(--t-xs); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.chip {
+  font: inherit; font-size: var(--t-sm); cursor: pointer; padding: .35rem .8rem; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+}
+.chip:hover { border-color: var(--pen); color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+
+/* ---------- Index card ---------- */
+.icard {
+  background-color: var(--card); color: var(--card-ink);
+  border-radius: 3px; position: relative;
+  box-shadow: 0 1px 1px var(--shadow), 0 10px 24px -14px var(--shadow);
+  font-family: var(--f-hand);
+  min-width: 0;
+}
+.icard-head { padding: .8rem 1rem .45rem; border-bottom: 2px solid var(--rule-red); }
+.icard .worry { font-size: 1.2rem; line-height: 1.35; overflow-wrap: anywhere; }
+.icard-lines {
+  padding: 0 1rem .6rem;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh-card) - 1px), var(--rule-blue) calc(var(--lh-card) - 1px), var(--rule-blue) var(--lh-card));
+  background-position: 0 .3rem;
+}
+.icard-meta { font-family: var(--f-body); font-size: var(--t-xs); color: var(--card-muted); }
+.tag { font-family: var(--f-body); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--card-muted); }
+.badge { display: inline-block; font-family: var(--f-body); font-size: .72rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; background: color-mix(in srgb, var(--rule-red) 16%, transparent); color: var(--card-ink); }
+.ruled-input {
+  width: 100%; border: 0; resize: vertical; background: transparent; color: var(--card-ink);
+  font-family: var(--f-hand); font-size: 1.15rem; line-height: var(--lh-card); padding: .3rem 0 0;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh-card) - 1px), var(--rule-blue) calc(var(--lh-card) - 1px), var(--rule-blue) var(--lh-card));
+  background-attachment: local; background-position: 0 .3rem;
+  min-height: calc(var(--lh-card) * 3 + .3rem);
+}
+.ruled-input::placeholder { color: var(--card-muted); opacity: .8; }
+.ruled-input:focus { outline: none; }
+.icard:focus-within { box-shadow: 0 0 0 3px var(--pen), 0 10px 24px -14px var(--shadow); }
+
+/* ---------- Home ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 2.5rem; align-items: center; }
+.hero-copy { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+@media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
+.fan { position: relative; height: 420px; max-width: 420px; width: 100%; margin-inline: auto; }
+.fan .icard { position: absolute; width: min(320px, 86%); }
+.fan .icard:nth-child(1) { top: 0; left: 0; transform: rotate(-4deg); }
+.fan .icard:nth-child(2) { top: 132px; right: 0; transform: rotate(2.5deg); }
+.fan .icard:nth-child(3) { top: 268px; left: 6%; transform: rotate(-1.2deg); }
+.fan .answer { font-size: 1.08rem; line-height: var(--lh-card); padding-top: .3rem; }
+.fan-caption { text-align: center; font-size: var(--t-xs); color: var(--muted); margin-top: .5rem; }
+@media (max-width: 420px) { .fan { height: 470px; } .fan .icard { width: 92%; } .fan .icard:nth-child(2) { top: 160px; } .fan .icard:nth-child(3) { top: 310px; } }
+
+.schedule { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem 1.25rem; padding: 1rem 1.1rem; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--line); }
+.field { display: flex; flex-direction: column; gap: .25rem; font-size: var(--t-xs); color: var(--muted); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.field input, .field select {
+  font: inherit; font-size: var(--t-md); text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink);
+  background: var(--desk); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .6rem; font-variant-numeric: tabular-nums;
+}
+.schedule .hint { flex-basis: 100%; }
+
+.notice { padding: 1rem 1.1rem; border-radius: var(--radius); display: flex; flex-direction: column; gap: .6rem; font-size: var(--t-sm); }
+.notice.ok { background: var(--ok-soft); }
+.notice.warn { background: var(--warn-soft); }
+.notice strong { font-size: var(--t-md); }
+.notice q { font-family: var(--f-hand); font-size: 1.1rem; quotes: "“" "”"; }
+
+.method ol { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; counter-reset: step; }
+.method li { counter-increment: step; display: flex; flex-direction: column; gap: .35rem; padding-top: .9rem; border-top: 2px solid var(--ink); min-width: 0; }
+.method li::before { content: counter(step); font-family: var(--f-display); font-size: 1.5rem; color: var(--pen); line-height: 1; }
+.method h3 { font-size: 1.1rem; }
+.method p { font-size: var(--t-sm); color: var(--ink-2); }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+.note-block { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.note-block h3 { font-size: 1.15rem; }
+.note-block p { font-size: var(--t-sm); color: var(--ink-2); max-width: 62ch; }
+.quote { font-family: var(--f-display); font-size: 1.2rem; color: var(--ink-2); border-left: 2px solid var(--rule-red); padding-left: 1rem; max-width: 52ch; }
+.quote cite { display: block; font-family: var(--f-body); font-style: normal; font-size: var(--t-xs); color: var(--muted); margin-top: .4rem; }
+
+/* ---------- Session ---------- */
+.session-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.stepper { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.stepper button, .stepper span {
+  font: inherit; font-size: var(--t-xs); font-weight: 700; display: inline-flex; align-items: center; gap: .4rem;
+  padding: .35rem .7rem .35rem .4rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted);
+}
+.stepper button { cursor: pointer; }
+.stepper button:hover { border-color: var(--pen); color: var(--ink); }
+.stepper .n { width: 1.35rem; height: 1.35rem; border-radius: 50%; display: inline-grid; place-items: center; background: var(--surface); font-variant-numeric: tabular-nums; }
+.stepper .now { border-color: var(--ink); color: var(--ink); }
+.stepper .now .n { background: var(--ink); color: var(--desk); }
+.stepper .done .n { background: var(--pen-soft); color: var(--pen); }
+.timer { font-variant-numeric: tabular-nums; font-size: var(--t-sm); color: var(--muted); display: flex; flex-direction: column; align-items: flex-end; }
+.timer b { font-size: var(--t-lg); color: var(--ink); font-weight: 700; }
+.timer.over b { color: var(--warn); }
+.step-head { display: flex; flex-direction: column; gap: .6rem; margin-top: 2rem; }
+.step-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+
+.checks { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: .6rem; max-width: 560px; }
+.checks button {
+  width: 100%; text-align: left; font: inherit; cursor: pointer; display: flex; gap: .8rem; align-items: center;
+  padding: .8rem 1rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+}
+.checks .box { width: 1.3rem; height: 1.3rem; border-radius: 4px; border: 2px solid var(--muted); flex: none; display: grid; place-items: center; }
+.checks [aria-pressed="true"] .box { background: var(--pen); border-color: var(--pen); }
+.checks [aria-pressed="true"] .box::after { content: ""; width: .35rem; height: .65rem; border: solid var(--pen-ink); border-width: 0 2px 2px 0; transform: translate(0, -1px) rotate(45deg); }
+
+.blank-card { max-width: 560px; margin-top: 1.5rem; }
+.blank-card .icard-lines { padding-top: .2rem; }
+.blank-card .actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; padding: .6rem 1rem .9rem; font-family: var(--f-body); }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.mini { display: flex; flex-direction: column; }
+.mini .icard-head { flex: 1; }
+.mini .foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .35rem .5rem .35rem 1rem; min-height: 2.2rem; }
+.x { font: inherit; font-family: var(--f-body); font-size: var(--t-xs); background: transparent; border: 0; color: var(--card-muted); cursor: pointer; padding: .3rem .5rem; border-radius: 6px; }
+.x:hover { background: color-mix(in srgb, var(--rule-red) 14%, transparent); color: var(--card-ink); }
+.empty { padding: 1.5rem; border: 1.5px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-size: var(--t-sm); }
+
+.sorter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; margin-top: 1.5rem; align-items: start; }
+@media (max-width: 720px) { .sorter { grid-template-columns: 1fr; } }
+.sort-top { display: flex; flex-direction: column; gap: 1rem; }
+.sort-top .icard { min-height: 9rem; transform: rotate(-1deg); }
+.sort-top .icard .worry { font-size: 1.4rem; }
+.pile-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pile-buttons .btn { border-radius: 8px; }
+.add-pile { display: flex; gap: .5rem; flex-wrap: wrap; }
+.add-pile input { font: inherit; flex: 1 1 10rem; min-width: 0; padding: .55rem .75rem; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.piles { display: flex; flex-direction: column; gap: 1rem; }
+.pile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .85rem 1rem; display: flex; flex-direction: column; gap: .6rem; }
+.pile-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.pile-head h3 { font-size: 1.1rem; }
+.pile-cards { display: flex; flex-wrap: wrap; gap: .4rem; }
+.pile-cards button {
+  font-family: var(--f-hand); font-size: 1rem; background: var(--card); color: var(--card-ink); border: 0; border-top: 2px solid var(--rule-red);
+  border-radius: 2px; padding: .25rem .6rem; cursor: pointer; box-shadow: 0 1px 2px var(--shadow); max-width: 100%; text-align: left; overflow-wrap: anywhere;
+}
+.pile-cards button:hover { text-decoration: line-through; text-decoration-color: var(--rule-red); }
+.meter { font-size: var(--t-sm); display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.dot { width: .6rem; height: .6rem; border-radius: 50%; display: inline-block; background: var(--ok); }
+.dot.warn { background: var(--warn); }
+
+.progress { display: flex; align-items: center; gap: .75rem; font-size: var(--t-sm); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.progress .track { flex: 1; max-width: 240px; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.progress .fill { height: 100%; background: var(--pen); border-radius: 999px; transition: width .3s ease; }
+.pile-section { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+.pile-section > h3 { display: flex; align-items: baseline; gap: .6rem; }
+.pile-section > h3 small { font-family: var(--f-body); font-size: var(--t-sm); color: var(--muted); }
+.answer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+@media (max-width: 400px) { .answer-grid { grid-template-columns: 1fr; } }
+.full .icard-head { display: flex; flex-direction: column; gap: .2rem; }
+.full .kinds { display: flex; flex-wrap: wrap; gap: .35rem; padding: .75rem 1rem .25rem; font-family: var(--f-body); }
+.full .kinds .chip { font-size: var(--t-xs); padding: .25rem .6rem; background: transparent; color: var(--card-muted); border-color: color-mix(in srgb, var(--card-muted) 40%, transparent); }
+.full .kinds .chip[aria-pressed="true"] { background: var(--card-ink); color: var(--card); border-color: var(--card-ink); }
+.kind-help { font-family: var(--f-body); font-size: var(--t-xs); color: var(--card-muted); padding: .3rem 1rem 0; }
+.phrases { display: flex; flex-direction: column; gap: .3rem; padding: .4rem 1rem 0; }
+.phrases button { font-family: var(--f-hand); font-size: .98rem; text-align: left; background: transparent; border: 1px dashed color-mix(in srgb, var(--card-muted) 45%, transparent); color: var(--card-ink); border-radius: 6px; padding: .25rem .55rem; cursor: pointer; }
+.phrases button:hover { border-style: solid; }
+.tried { font-family: var(--f-body); font-size: var(--t-xs); color: var(--card-muted); padding: .5rem 1rem 0; display: flex; flex-direction: column; gap: .2rem; }
+.tried s { text-decoration-color: var(--rule-red); }
+.worst { font-family: var(--f-body); border-top: 1px dashed color-mix(in srgb, var(--card-muted) 40%, transparent); margin: 0 1rem; padding: .5rem 0 .8rem; }
+.worst summary { cursor: pointer; font-size: var(--t-sm); font-weight: 700; color: var(--card-ink); padding: .2rem 0; }
+.worst .wbody { display: flex; flex-direction: column; gap: .6rem; padding-top: .5rem; }
+.worst label { font-size: var(--t-xs); color: var(--card-muted); font-weight: 700; display: flex; flex-direction: column; gap: .25rem; }
+.worst textarea { font-family: var(--f-hand); font-size: 1.05rem; color: var(--card-ink); background: transparent; border: 0; border-bottom: 1px solid var(--rule-blue); resize: vertical; padding: .2rem 0; min-height: 2.4rem; }
+.worst textarea:focus { outline: none; border-bottom-color: var(--pen); }
+.worst .stand { display: flex; gap: .35rem; flex-wrap: wrap; }
+.worst .stand .chip { font-size: var(--t-xs); padding: .25rem .6rem; background: transparent; color: var(--card-muted); border-color: color-mix(in srgb, var(--card-muted) 40%, transparent); }
+.worst .stand .chip[aria-pressed="true"] { background: var(--card-ink); color: var(--card); border-color: var(--card-ink); }
+.counsel { font-family: var(--f-body); font-size: var(--t-xs); margin: .5rem 1rem 0; padding: .45rem .6rem; border-radius: 6px; background: color-mix(in srgb, var(--rule-red) 12%, transparent); color: var(--card-ink); }
+
+/* Put away */
+.putaway { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 2.5rem; align-items: center; margin-top: 2rem; }
+@media (max-width: 680px) { .putaway { grid-template-columns: 1fr; } }
+.cardbox { position: relative; height: 230px; width: 100%; max-width: 260px; margin-inline: auto; }
+.cardbox .drop { position: absolute; left: 14%; width: 72%; height: 92px; background: var(--card); border-radius: 2px; box-shadow: 0 1px 2px var(--shadow); border-top: 14px solid var(--card); background-image: linear-gradient(to bottom, var(--rule-red) 0 2px, transparent 2px), repeating-linear-gradient(to bottom, transparent 0 13px, var(--rule-blue) 13px 14px); animation: drop .9s cubic-bezier(.3, .7, .3, 1) both; }
+.cardbox .front { position: absolute; left: 4%; right: 4%; bottom: 0; height: 120px; background: var(--pen); border-radius: 4px 4px 8px 8px; display: grid; place-items: center; color: var(--pen-ink); font-family: var(--f-display); font-size: 1.1rem; box-shadow: 0 12px 30px -16px var(--shadow); z-index: 2; }
+.cardbox .front span { display: block; text-align: center; line-height: 1.25; }
+.cardbox .front small { font-family: var(--f-body); font-size: var(--t-xs); opacity: .8; }
+.cardbox .back { position: absolute; left: 4%; right: 4%; bottom: 60px; height: 70px; background: color-mix(in srgb, var(--pen) 70%, var(--ink)); border-radius: 4px; }
+@keyframes drop { from { transform: translateY(-140px) rotate(var(--r, 0deg)); opacity: 0; } 40% { opacity: 1; } to { transform: translateY(0) rotate(var(--r, 0deg)); opacity: 1; } }
+.tally { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.tally li { font-size: var(--t-sm); padding: .3rem .75rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+
+/* ---------- Morning ---------- */
+.two { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem; display: flex; flex-direction: column; gap: .9rem; min-width: 0; }
+.panel h3 { font-size: 1.15rem; }
+.seg { display: inline-flex; align-self: flex-start; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { font: inherit; font-size: var(--t-sm); border: 0; background: transparent; color: var(--ink-2); padding: .45rem .9rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.minute-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.minute-chips .chip { font-variant-numeric: tabular-nums; font-size: var(--t-xs); }
+.mlist { display: flex; flex-direction: column; gap: .9rem; }
+.mcard { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem 1rem; padding: .9rem 1rem .9rem 1.1rem; align-items: start; }
+.mcard .msol { font-size: 1.2rem; line-height: 1.4; overflow-wrap: anywhere; }
+.mcard .mworry { font-family: var(--f-body); font-size: var(--t-xs); color: var(--card-muted); margin-top: .3rem; overflow-wrap: anywhere; }
+.mcard .acts { display: flex; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; font-family: var(--f-body); }
+.mcard .acts .btn { border-color: var(--card-muted); color: var(--card-ink); }
+.mcard .acts .btn.primary { background: var(--card-ink); border-color: var(--card-ink); color: var(--card); }
+.mcard .retry { grid-column: 1 / -1; display: flex; flex-direction: column; gap: .5rem; font-family: var(--f-body); }
+.mcard .retry textarea { font-family: var(--f-hand); font-size: 1.05rem; color: var(--card-ink); background: transparent; border: 1px solid var(--rule-blue); border-radius: 6px; padding: .4rem .6rem; }
+.mcard.kind-control, .mcard.kind-person { border-left: 4px solid var(--rule-blue); }
+@media (max-width: 520px) { .mcard { grid-template-columns: 1fr; } .mcard .acts { justify-content: flex-start; } }
+.donelist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .4rem; }
+.donelist li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; font-size: var(--t-sm); color: var(--muted); }
+.donelist s { text-decoration-color: var(--muted); overflow-wrap: anywhere; min-width: 0; }
+.copybox { width: 100%; min-height: 8rem; font: inherit; font-size: var(--t-sm); padding: .6rem; border-radius: 8px; border: 1px solid var(--line); background: var(--desk); color: var(--ink); }
+
+/* ---------- Bedside ---------- */
+.bedside { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; padding-top: 4vh; }
+.bedside h1 { font-size: var(--t-xl); color: var(--ink); }
+.bedside p { color: var(--ink-2); }
+.bedside .icard { box-shadow: none; border: 1px solid var(--line); }
+.bedside .ruled-input { font-size: 1.3rem; min-height: calc(var(--lh-card) * 4 + .3rem); }
+.bedside .settled { font-family: var(--f-display); font-size: var(--t-xl); color: var(--ink); }
+.bedside .tiny { font-size: var(--t-xs); color: var(--muted); }
+:root.night .topbar { background: var(--desk); }
+:root.night .tabs a[aria-current="page"] { background: var(--pen-soft); color: var(--ink); }
+
+/* ---------- Log ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: var(--t-sm); color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: .45rem; font-variant-numeric: tabular-nums; }
+.legend i { width: .8rem; height: .8rem; border-radius: 2px; display: inline-block; }
+.legend .k-with { background: var(--s-with); }
+.legend .k-without { background: var(--s-without); }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; overflow: visible; }
+.chart .ax { fill: var(--muted); font-family: var(--f-body); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .gl { stroke: var(--grid); stroke-width: 1; }
+.chart .base { stroke: var(--line); stroke-width: 1; }
+.chart .b-with { fill: var(--s-with); }
+.chart .b-without { fill: var(--s-without); }
+.chart .b-none { fill: var(--line); }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .hit:hover + .hl, .chart .hl.on { fill: var(--pen-soft); }
+.chart .hl { fill: transparent; }
+.chart.sample .bars { opacity: .5; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--surface); font-size: var(--t-xs); padding: .4rem .6rem; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -100%); font-variant-numeric: tabular-nums; z-index: 3; }
+.sample-flag { font-size: var(--t-xs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); }
+.verdict { font-family: var(--f-display); font-size: var(--t-lg); max-width: 40ch; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .45rem .75rem .45rem 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: var(--t-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pen); font-weight: 700; }
+.danger { color: var(--warn); border-color: var(--warn); }
+.toast { position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: .6rem 1rem; border-radius: 999px; font-size: var(--t-sm); z-index: 20; max-width: calc(100% - 32px); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0ms !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#tonight"><span class="brand-mark" aria-hidden="true"></span>Worry Time</a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#tonight" data-tab="tonight">Tonight</a>
+      <a href="#morning" data-tab="morning">Morning</a>
+      <a href="#bedside" data-tab="bedside">Bedside card</a>
+      <a href="#log" data-tab="log">Is it working?</a>
+    </nav>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ===================== Storage ===================== */
+  const KEY = 'worry-time.v1';
+  const fresh = () => ({
+    v: 1,
+    settings: { worryAt: '19:30', bedAt: '23:00' },
+    piles: [{ id: 'todo', name: 'Little things', fixed: true }],
+    cards: [],
+    sessions: [],
+    nights: {},
+    current: null
+  });
+  let memoryOnly = false;
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const d = Object.assign(fresh(), JSON.parse(raw));
+        if (!d.piles.some(p => p.id === 'todo')) d.piles.unshift({ id: 'todo', name: 'Little things', fixed: true });
+        return d;
+      }
+    } catch (e) { memoryOnly = true; }
+    return fresh();
+  }
+  let S = load();
+  let saveTimer = null;
+  function save() {
+    clearTimeout(saveTimer);
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { memoryOnly = true; }
+  }
+  function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+
+  /* ===================== Constants ===================== */
+  const STEPS = ['Settle in', 'Write', 'Sort', 'Answer', 'Put away'];
+  const KINDS = {
+    step:    { label: 'Next step', help: 'The best step toward a solution. If you are not sure what the solution is, write a small step toward one.', ph: 'For example: Call the bank at 9 and ask about a payment plan.' },
+    todo:    { label: 'To-do', help: 'Small worries just need to go on the to-do list.', ph: 'What to do, and when. For example: Pay the phone bill online before work.' },
+    control: { label: 'Out of my control', help: 'Some worries you can do nothing about. Say so in writing, then let it rest.', ph: 'This worry is out of my control…' },
+    person:  { label: 'About a person', help: 'You probably can’t change them. Write what you want to say the next time you see them.', ph: 'Next time I see them, I’ll say…' }
+  };
+  const CONTROL_PHRASES = [
+    'This worry is out of my control. I’ll deal with it as the solution becomes apparent.',
+    'I have done everything I can. Now I have to wait.',
+    'I will not deal with this worry today.',
+    'I’ll deal with this when '
+  ];
+  const PILE_IDEAS = ['Money', 'Work', 'Family', 'Health', 'Home', 'Relationships', 'Big ones'];
+  const MAX_PILES = 7;
+  const SESSION_MIN = 30;
+
+  /* ===================== Helpers ===================== */
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+  const pad = n => String(n).padStart(2, '0');
+  const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  // Anything before 6 A.M. belongs to the previous evening.
+  const eveningKey = t => dateKey(new Date(t - 6 * 3600e3));
+  const keyToDate = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  const shiftKey = (k, days) => { const d = keyToDate(k); d.setDate(d.getDate() + days); return dateKey(d); };
+  const tonightKey = () => eveningKey(Date.now());
+  const lastNightKey = () => new Date().getHours() < 6 ? tonightKey() : shiftKey(dateKey(new Date()), -1);
+  const fmtDay = k => keyToDate(k).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  const fmtClock = t => new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const fmtHHMM = hhmm => { const [h, m] = hhmm.split(':').map(Number); const d = new Date(); d.setHours(h, m, 0, 0); return fmtClock(d); };
+  const minOf = hhmm => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+  const lateAdj = m => m < 360 ? m + 1440 : m;
+  const dur = min => { const h = Math.floor(min / 60), m = min % 60; return [h ? `${h} h` : '', m ? `${m} min` : ''].filter(Boolean).join(' ') || '0 min'; };
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
+
+  const pileById = id => S.piles.find(p => p.id === id);
+  const pileName = id => (pileById(id) || {}).name || 'Unsorted';
+  const cardById = id => S.cards.find(c => c.id === id);
+  const sessionById = id => S.sessions.find(s => s.id === id);
+  const currentSession = () => S.current ? sessionById(S.current) : null;
+  const activeCards = s => S.cards.filter(c => c.sessionId === s.id && c.status === 'active');
+  const answered = c => c.solution && c.solution.trim().length > 0;
+
+  /* ===================== UI state (not saved) ===================== */
+  const ui = { putaway: null, checks: {}, retryOpen: {}, bedsideSaved: false, confirmClear: false, confirmEnd: false, copyText: null, focus: null, logDraft: null };
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+
+  /* ===================== Small view parts ===================== */
+  const cardBadges = c => {
+    const b = [];
+    if (c.source === 'bedside' && !c.history.length) b.push('From the bedside card');
+    if (c.history.length) b.push(c.history.length === 1 ? 'Didn’t work last time' : `Tried ${c.history.length} times`);
+    return b.map(x => `<span class="badge">${esc(x)}</span>`).join(' ');
+  };
+
+  function exampleFan() {
+    const ex = [
+      { pile: 'Money', worry: 'Only $200 in the bank and $800 in bills.', answer: 'Pay rent + electric. 9 AM: call phone co. & card co. about partial payments.' },
+      { pile: 'Little things', worry: 'Too much to do tomorrow.', answer: '8–10 report · 10:30 dentist · 1 PM calls · gym if time.' },
+      { pile: 'Work', worry: 'Will the job offer come through?', answer: 'I’ve done everything I can. Now I have to wait.' }
+    ];
+    return `<div><div class="fan" aria-label="Example cards">${ex.map(e => `
+      <div class="icard">
+        <div class="icard-head"><span class="tag">${esc(e.pile)}</span><p class="worry">${esc(e.worry)}</p></div>
+        <div class="icard-lines"><p class="answer">${esc(e.answer)}</p></div>
+      </div>`).join('')}</div>
+      <p class="fan-caption">Example cards, based on the book</p></div>`;
+  }
+
+  /* ===================== Views ===================== */
+  function viewTonight() {
+    if (ui.putaway && sessionById(ui.putaway)) return viewSession(sessionById(ui.putaway), true);
+    const cur = currentSession();
+    if (cur) return viewSession(cur, false);
+    return viewHome();
+  }
+
+  function viewHome() {
+    const now = new Date();
+    const nowA = lateAdj(now.getHours() * 60 + now.getMinutes());
+    const wA = lateAdj(minOf(S.settings.worryAt)), bA = lateAdj(minOf(S.settings.bedAt));
+    const gap = bA - wA;
+    const late = nowA >= bA - 60;
+    const tk = tonightKey();
+    const doneTonight = S.sessions.filter(s => s.endedAt && s.nightKey === tk);
+    const waiting = S.cards.filter(c => c.status === 'waiting');
+    const setCount = S.cards.filter(c => c.status === 'set').length;
+
+    let gapHint;
+    if (gap <= 0) gapHint = 'Worry time is set for after bedtime. Move it to the early evening.';
+    else if (gap < 120) gapHint = `That leaves ${dur(gap)} before bed. Earlier is better: Hauri suggests the early evening, well before bedtime.`;
+    else gapHint = `That leaves ${dur(gap)} between worry time and bed.`;
+
+    let status = '';
+    if (doneTonight.length) {
+      const last = doneTonight[doneTonight.length - 1];
+      const n = S.cards.filter(c => c.sessionId === last.id && c.status !== 'active').length;
+      status = `<div class="notice ok">
+        <strong>Worry time is done for tonight.</strong>
+        <p>${n ? `${plural(n, 'card')} put away at ${fmtClock(last.endedAt)}.` : `Finished at ${fmtClock(last.endedAt)}.`} If a worry comes back in bed, tell yourself:</p>
+        <p><q>I dealt with that this evening. The answer is written down.</q></p>
+        <div class="row"><a class="btn small" href="#bedside">Open the bedside card</a></div>
+      </div>`;
+    } else if (late) {
+      status = `<div class="notice warn">
+        <strong>It’s close to bedtime.</strong>
+        <p>Worry time works best in the early evening, while you’re still thinking clearly. If something is on your mind now, put it on the bedside card and deal with it tomorrow evening.</p>
+        <div class="row"><a class="btn small primary" href="#bedside">Open the bedside card</a></div>
+      </div>`;
+    }
+
+    const cur = currentSession();
+    return `
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">An evening routine from Peter Hauri’s No More Sleepless Nights</p>
+        <h1>Do your worrying early, so you don’t do it in bed.</h1>
+        <p class="lead">Set aside half an hour in the early evening. Write each worry on its own card, sort the cards into a few piles, and write the best next step at the bottom of each one. Then put them away. If a worry shows up at 3 A.M., you already know what you’re going to do about it.</p>
+        <div class="schedule">
+          <label class="field" for="worryAt">Worry time<input type="time" id="worryAt" value="${esc(S.settings.worryAt)}" data-setting="worryAt"></label>
+          <label class="field" for="bedAt">Bedtime<input type="time" id="bedAt" value="${esc(S.settings.bedAt)}" data-setting="bedAt"></label>
+          <p class="hint" id="gapHint">${esc(gapHint)}</p>
+        </div>
+        ${status}
+        <div class="row">
+          <button class="btn primary" data-act="start">${cur ? 'Resume worry time' : doneTonight.length ? 'Start another session' : 'Start worry time'}</button>
+          <span class="hint">About ${SESSION_MIN} minutes, somewhere quiet.</span>
+        </div>
+        ${waiting.length ? `<p class="hint">${plural(waiting.length, 'card is', 'cards are')} waiting from before. They’ll be in tonight’s pile.</p>` : ''}
+        ${setCount ? `<p class="hint">${plural(setCount, 'card')} on your <a href="#morning">morning list</a>.</p>` : ''}
+      </div>
+      ${exampleFan()}
+    </section>
+
+    <section class="method" aria-labelledby="how">
+      <h2 id="how">How a session works</h2>
+      <ol>
+        <li><h3>Settle in</h3><p>Go to a quiet room. Ask not to be disturbed, not even for calls.</p></li>
+        <li><h3>Write</h3><p>One worry per card, big or small, until no more come. About 10–15 minutes.</p></li>
+        <li><h3>Sort</h3><p>Group the cards into three to seven piles: money, work, family, little things.</p></li>
+        <li><h3>Answer</h3><p>At the bottom of each card, write the best next step, or that it’s out of your control.</p></li>
+        <li><h3>Put away</h3><p>The work of worrying is done. Check the cards in the morning and follow up.</p></li>
+      </ol>
+    </section>
+
+    <section class="notes">
+      <div class="note-block">
+        <h3>The worst possible scenario</h3>
+        <p>For any card, ask: what is the worst thing that could happen? Could I stand it? What would I do? If it’s something you couldn’t handle, the answer is a plan to get help. Each card has room for this.</p>
+      </div>
+      <div class="note-block">
+        <h3>When an answer doesn’t work</h3>
+        <p>Mark it in the morning and the card comes back the next evening, with what you tried. A wrong first answer still leaves you one option closer. If a worry keeps returning, think it through again or talk to a counselor.</p>
+      </div>
+      <blockquote class="quote">I have worried about thousands of things in my life, most of which never happened.<cite>Mark Twain, quoted in the book</cite></blockquote>
+    </section>`;
+  }
+
+  function viewSession(s, finished) {
+    const step = finished ? 5 : s.step;
+    const stepper = STEPS.map((name, i) => {
+      const n = i + 1;
+      const state = finished || n < step ? 'done' : n === step ? 'now' : 'todo';
+      const inner = `<span class="n">${state === 'done' ? '✓' : n}</span>${name}`;
+      const canGo = !finished && n < 5 && n <= (s.maxStep || 1) && n !== step;
+      return `<li>${canGo ? `<button class="${state}" data-act="go" data-step="${n}">${inner}</button>` : `<span class="${state}" ${n === step ? 'aria-current="step"' : ''}>${inner}</span>`}</li>`;
+    }).join('');
+    const timer = finished ? '' : `<div class="timer" id="timer" aria-live="off"><b id="clock">0:00</b><span id="clockNote">of ${SESSION_MIN}:00</span></div>`;
+    const body = finished ? stepPutAway(s) : [stepSettle, stepWrite, stepSort, stepAnswer][step - 1](s);
+    return `<section>
+      <div class="session-bar"><ol class="stepper" aria-label="Session steps">${stepper}</ol>${timer}</div>
+      ${body}
+    </section>`;
+  }
+
+  function stepSettle(s) {
+    const items = [
+      ['room', 'I’m somewhere quiet, with the door closed.'],
+      ['people', 'I’ve asked not to be disturbed, not even for phone calls.'],
+      ['screens', 'Other apps and tabs are put away.'],
+      ['breathe', 'I’ve sat back and relaxed for a minute.']
+    ];
+    return `
+      <div class="step-head">
+        <h2>Settle in</h2>
+        <p class="lead">This half hour is for worrying, on purpose, so you don’t have to do it in bed. Get comfortable first. Pretty soon, worries will start to come.</p>
+      </div>
+      <ul class="checks">${items.map(([k, t]) => `<li><button data-act="check" data-k="${k}" aria-pressed="${!!ui.checks[k]}"><span class="box" aria-hidden="true"></span>${esc(t)}</button></li>`).join('')}</ul>
+      <p class="hint" style="margin-top:1.25rem;max-width:62ch">Sometimes no worries come. That’s fine; you’ve used the time to relax. Don’t sit there worrying that you have no worries.</p>
+      <div class="step-foot"><button class="btn quiet" data-act="endAsk">Leave this session</button>${endConfirm(s)}<button class="btn primary" data-act="go" data-step="2">Start writing</button></div>`;
+  }
+
+  function endConfirm(s) {
+    if (!ui.confirmEnd) return '';
+    return `<div class="notice warn" style="flex-basis:100%">
+      <p>Leave without finishing? Any cards you wrote will wait for your next worry time.</p>
+      <div class="row"><button class="btn small" data-act="endSession">Leave session</button><button class="btn small quiet" data-act="endCancel">Keep going</button></div>
+    </div>`;
+  }
+
+  function stepWrite(s) {
+    const cards = activeCards(s);
+    return `
+      <div class="step-head">
+        <h2>Write each worry on its own card</h2>
+        <p class="lead">Big or small, sensible or silly: every bothersome thought gets a card. Anything you write down won’t buzz in your head so much. Keep going until nothing else comes, usually 10 to 15 minutes.</p>
+      </div>
+      <form class="blank-card icard" data-form="addCard" autocomplete="off">
+        <div class="icard-head"><span class="tag">New card</span></div>
+        <div class="icard-lines" style="background:none;padding-bottom:0">
+          <label class="sr" for="newCard">Worry</label>
+          <textarea id="newCard" class="ruled-input" rows="2" placeholder="What’s on your mind?"></textarea>
+        </div>
+        <div class="actions"><span class="hint">Enter adds the card. Shift+Enter starts a new line.</span><button class="btn small primary" type="submit">Add card</button></div>
+      </form>
+      ${cards.length ? `<div class="card-grid">${cards.slice().reverse().map(c => `
+        <article class="icard mini">
+          <div class="icard-head"><p class="worry">${esc(c.text)}</p></div>
+          <div class="foot"><span>${cardBadges(c)}</span><button class="x" data-act="delCard" data-id="${c.id}" aria-label="Remove card: ${esc(c.text)}">Remove</button></div>
+        </article>`).join('')}</div>` : ''}
+      <div class="step-foot">
+        <span class="hint">${cards.length ? plural(cards.length, 'card') + ' so far' : 'No cards yet.'}</span>
+        <div class="row">
+          ${cards.length ? `<button class="btn primary" data-act="go" data-step="3">I’m out of worries. Sort them</button>` : `<button class="btn" data-act="finishEmpty">No worries tonight. Finish</button>`}
+        </div>
+      </div>`;
+  }
+
+  function stepSort(s) {
+    const cards = activeCards(s);
+    const unsorted = cards.filter(c => !c.pile || !pileById(c.pile));
+    const top = unsorted[0];
+    const usedPiles = S.piles.filter(p => cards.some(c => c.pile === p.id));
+    const canAdd = S.piles.length < MAX_PILES;
+    const ideas = PILE_IDEAS.filter(n => !S.piles.some(p => p.name.toLowerCase() === n.toLowerCase())).slice(0, 4);
+
+    let meter;
+    const nUsed = usedPiles.length;
+    if (cards.length >= 4 && nUsed >= cards.length - 1 && nUsed > 2) meter = `<span class="dot warn"></span>Almost one pile per card. Try merging some; the point is to bring order to the chaos.`;
+    else if (nUsed >= 3 && nUsed <= MAX_PILES) meter = `<span class="dot"></span>${nUsed} piles. Three to seven is about right.`;
+    else meter = `<span class="dot warn"></span>${plural(nUsed, 'pile')} in use. Three to seven is about right${cards.length < 4 ? ', though with only a few cards fewer is fine' : ''}.`;
+
+    return `
+      <div class="step-head">
+        <h2>Sort the cards into piles</h2>
+        <p class="lead">Group them by subject (money, work, family) or by size (little, big, silly), whatever suits you. Little things become a to-do list. Sorting already starts to put the worries under your control.</p>
+      </div>
+      <div class="sorter">
+        <div class="sort-top">
+          ${top ? `
+            <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry">${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
+            <p class="hint">Which pile does this go in?</p>
+            <div class="pile-buttons">${S.piles.map(p => `<button class="btn" data-act="toPile" data-id="${top.id}" data-pile="${p.id}">${esc(p.name)}</button>`).join('')}</div>`
+          : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p></div>`}
+          <form class="add-pile" data-form="addPile">
+            <label class="sr" for="pileName">New pile name</label>
+            <input id="pileName" maxlength="24" placeholder="${canAdd ? 'New pile' : 'Seven piles is the limit'}" ${canAdd ? '' : 'disabled'}>
+            <button class="btn" type="submit" ${canAdd ? '' : 'disabled'}>Add pile</button>
+          </form>
+          ${canAdd && ideas.length ? `<div class="row"><span class="hint">Ideas:</span>${ideas.map(n => `<button class="chip" data-act="ideaPile" data-name="${esc(n)}">${esc(n)}</button>`).join('')}</div>` : ''}
+        </div>
+        <div class="piles">
+          ${S.piles.map(p => {
+            const pc = cards.filter(c => c.pile === p.id);
+            return `<div class="pile">
+              <div class="pile-head"><h3>${esc(p.name)}</h3><span class="row" style="gap:.25rem"><span class="hint">${pc.length}</span>${!p.fixed && !pc.length ? `<button class="x" data-act="delPile" data-pile="${p.id}" aria-label="Delete pile ${esc(p.name)}">Delete</button>` : ''}</span></div>
+              ${pc.length ? `<div class="pile-cards">${pc.map(c => `<button data-act="unsort" data-id="${c.id}" title="Take this card back out">${esc(c.text)}</button>`).join('')}</div>` : ''}
+            </div>`;
+          }).join('')}
+          <p class="meter">${meter}</p>
+        </div>
+      </div>
+      <div class="step-foot">
+        <button class="btn quiet" data-act="go" data-step="2">Back to writing</button>
+        <button class="btn primary" data-act="go" data-step="4" ${unsorted.length ? 'disabled' : ''}>${unsorted.length ? `Sort ${plural(unsorted.length, 'more card')} first` : 'Answer each card'}</button>
+      </div>`;
+  }
+
+  function fullCard(c) {
+    const k = c.kind || 'step';
+    const w = c.worst || {};
+    const last = c.history[c.history.length - 1];
+    return `<article class="icard full" data-card="${c.id}">
+      <div class="icard-head"><span class="tag">${esc(pileName(c.pile))}</span><p class="worry">${esc(c.text)}</p>${cardBadges(c) ? `<span>${cardBadges(c)}</span>` : ''}</div>
+      ${c.history.length ? `<div class="tried">${c.history.map(h => `<span>Tried: <s>${esc(h.solution)}</s>${h.note ? ` · ${esc(h.note)}` : ''}</span>`).join('')}<span>That’s one less option to consider. Try something else, or get advice.</span></div>` : ''}
+      ${c.history.length >= 2 ? `<p class="counsel">This one keeps coming back. Think it through again from the start, or talk it over with a counselor or someone you trust.</p>` : ''}
+      <div class="kinds" role="group" aria-label="What kind of answer">${Object.entries(KINDS).map(([key, v]) => `<button class="chip" data-act="kind" data-id="${c.id}" data-kind="${key}" aria-pressed="${k === key}">${v.label}</button>`).join('')}</div>
+      <p class="kind-help">${esc(KINDS[k].help)}</p>
+      ${k === 'control' ? `<div class="phrases">${CONTROL_PHRASES.map((p, i) => `<button data-act="phrase" data-id="${c.id}" data-i="${i}">${esc(p)}${p.endsWith(' ') ? '…' : ''}</button>`).join('')}</div>` : ''}
+      <div class="icard-lines" style="background:none">
+        <label class="sr" for="sol-${c.id}">Answer for: ${esc(c.text)}</label>
+        <textarea id="sol-${c.id}" class="ruled-input" rows="3" data-field="solution" data-id="${c.id}" placeholder="${esc(KINDS[k].ph)}">${esc(c.solution)}</textarea>
+      </div>
+      <details class="worst" data-id="${c.id}" ${c.worstOpen ? 'open' : ''}>
+        <summary>Worst possible scenario</summary>
+        <div class="wbody">
+          <label for="w1-${c.id}">What’s the worst that could happen?<textarea id="w1-${c.id}" rows="1" data-field="worst.what" data-id="${c.id}">${esc(w.what)}</textarea></label>
+          <div><span class="tag" style="display:block;margin-bottom:.3rem">Could I stand it?</span><div class="stand">${[['yes', 'Yes, I could'], ['no', 'No, I couldn’t'], ['unsure', 'Not sure']].map(([v, l]) => `<button class="chip" data-act="stand" data-id="${c.id}" data-v="${v}" aria-pressed="${w.stand === v}">${l}</button>`).join('')}</div></div>
+          <label for="w2-${c.id}">${w.stand === 'no' || w.stand === 'unsure' ? 'Then the plan is to get help. Who will you ask, and when?' : 'What would I do if it happened?'}<textarea id="w2-${c.id}" rows="1" data-field="worst.plan" data-id="${c.id}">${esc(w.plan)}</textarea></label>
+        </div>
+      </details>
+    </article>`;
+  }
+
+  function stepAnswer(s) {
+    const cards = activeCards(s);
+    const done = cards.filter(answered).length;
+    const groups = S.piles.map(p => ({ p, cs: cards.filter(c => c.pile === p.id) })).filter(g => g.cs.length);
+    return `
+      <div class="step-head">
+        <h2>Write an answer at the bottom of each card</h2>
+        <p class="lead">Think about each pile and what you can do. Write the step down; don’t just keep it in your head. That written note is a contract with yourself, and it’s what lets you put the worry away. Even an imperfect answer beats doing nothing.</p>
+        <div class="progress" id="progress">${progressInner(done, cards.length)}</div>
+      </div>
+      ${groups.map(g => `<section class="pile-section"><h3>${esc(g.p.name)} <small>${plural(g.cs.length, 'card')}</small></h3><div class="answer-grid">${g.cs.map(fullCard).join('')}</div></section>`).join('')}
+      <div class="step-foot">
+        <button class="btn quiet" data-act="go" data-step="3">Back to sorting</button>
+        <div class="row"><span class="hint" id="leftHint">${leftHint(cards.length - done)}</span><button class="btn primary" data-act="putAway">Put them away</button></div>
+      </div>`;
+  }
+  const progressInner = (d, n) => `<span>${d} of ${n} answered</span><span class="track" aria-hidden="true"><span class="fill" style="width:${n ? Math.round(d / n * 100) : 0}%"></span></span>`;
+  const leftHint = left => left ? `${plural(left, 'card')} without an answer will wait for next time.` : 'Every card has an answer.';
+
+  function stepPutAway(s) {
+    const cards = S.cards.filter(c => c.sessionId === s.id);
+    const set = cards.filter(c => c.status === 'set' || c.status === 'done');
+    const waiting = cards.filter(c => c.status === 'waiting');
+    const counts = {};
+    set.forEach(c => { counts[c.kind || 'step'] = (counts[c.kind || 'step'] || 0) + 1; });
+    const label = { step: ['next step', 'next steps'], todo: ['to-do', 'to-dos'], control: ['out of your control', 'out of your control'], person: ['about a person', 'about people'] };
+    const drops = Array.from({ length: Math.min(Math.max(set.length, 1), 6) }, (_, i) =>
+      `<span class="drop" style="top:${20 + i * 9}px;--r:${(i % 2 ? 1 : -1) * (1 + i)}deg;animation-delay:${.15 + i * .18}s"></span>`).join('');
+    return `
+      <div class="putaway">
+        <div class="cardbox" aria-hidden="true"><span class="back"></span>${drops}<span class="front"><span>Worry cards<br><small>${esc(fmtDay(s.nightKey))}</small></span></span></div>
+        <div class="stack">
+          <h2>Your worrying is done for tonight.</h2>
+          <p class="lead">${set.length ? `You faced ${plural(set.length, 'worry', 'worries')} squarely and wrote down what to do about each one.` : 'You took the time to sit with whatever came up.'} If one comes back in bed, tell it:</p>
+          <p class="quote" style="font-family:var(--f-hand);font-size:1.35rem">“I dealt with that this evening. The answer is written down. Go away.”</p>
+          ${set.length ? `<ul class="tally">${Object.entries(counts).map(([k, n]) => `<li>${n} ${label[k][n === 1 ? 0 : 1]}</li>`).join('')}${waiting.length ? `<li>${waiting.length} waiting for next time</li>` : ''}</ul>` : ''}
+          <p class="hint" style="max-width:60ch">If a new worry turns up later, put it on the bedside card. Check your cards in the morning and follow up.</p>
+          <div class="row"><a class="btn primary" href="#bedside">Open the bedside card</a><a class="btn" href="#morning">See the morning list</a><button class="btn quiet" data-act="closePutaway">Done</button></div>
+        </div>
+      </div>`;
+  }
+
+  function checkinForm(key, withDate) {
+    const entry = S.nights[key] || {};
+    const hadSession = S.sessions.some(s => s.endedAt && s.nightKey === key);
+    const draft = ui.logDraft && ui.logDraft.key === key ? ui.logDraft : null;
+    const worry = draft ? draft.worry : (entry.worry ?? (hadSession ? true : null));
+    const minutes = draft ? draft.minutes : (entry.minutes ?? '');
+    return `<form class="stack" data-form="checkin" data-key="${key}" style="gap:.8rem">
+      ${withDate ? `<label class="field" for="logDate">Night of<input type="date" id="logDate" value="${key}" max="${tonightKey()}"></label>` : ''}
+      <div class="stack" style="gap:.35rem"><span class="field">Worry time that evening?</span>
+        <div class="seg" role="group" aria-label="Worry time that evening">
+          <button type="button" data-act="ciWorry" data-v="1" aria-pressed="${worry === true}">Yes</button><button type="button" data-act="ciWorry" data-v="0" aria-pressed="${worry === false}">No</button>
+        </div>
+        ${hadSession ? '<span class="hint">You finished a session that evening.</span>' : ''}
+      </div>
+      <label class="field" for="ciMin-${key}">Minutes to fall asleep (your best guess)<input type="number" id="ciMin-${key}" min="0" max="600" step="5" inputmode="numeric" value="${esc(minutes)}" data-field="ciMin" style="max-width:8rem"></label>
+      <div class="minute-chips">${[10, 20, 30, 45, 60, 90, 120].map(m => `<button type="button" class="chip" data-act="ciMinutes" data-m="${m}">${m}</button>`).join('')}</div>
+      <div class="row"><button class="btn primary small" type="submit">Save</button>${entry.minutes != null ? `<span class="hint">Saved: ${entry.worry ? 'worry time' : 'no worry time'}, ${entry.minutes} min</span>` : ''}</div>
+    </form>`;
+  }
+
+  function viewMorning() {
+    const order = { todo: 0, step: 1, person: 2, control: 3 };
+    const set = S.cards.filter(c => c.status === 'set').sort((a, b) => (order[a.kind] ?? 1) - (order[b.kind] ?? 1) || a.setAt - b.setAt);
+    const today = dateKey(new Date());
+    const doneToday = S.cards.filter(c => c.status === 'done' && c.doneAt && dateKey(new Date(c.doneAt)) === today);
+    const waiting = S.cards.filter(c => c.status === 'waiting');
+    const ln = lastNightKey();
+
+    const list = set.length ? `<div class="mlist">${set.map(c => `
+      <article class="icard mcard kind-${c.kind || 'step'}">
+        <div><p class="msol">${esc(c.solution)}</p><p class="mworry">${esc(pileName(c.pile))} · ${esc(c.text)}</p></div>
+        <div class="acts">
+          <button class="btn small primary" data-act="markDone" data-id="${c.id}">${c.kind === 'control' ? 'Let it rest' : 'Done'}</button>
+          <button class="btn small" data-act="retryOpen" data-id="${c.id}" aria-expanded="${!!ui.retryOpen[c.id]}">Didn’t work</button>
+        </div>
+        ${ui.retryOpen[c.id] ? `<form class="retry" data-form="retry" data-id="${c.id}">
+          <label class="hint" for="rn-${c.id}">What happened? Next time you’ll have one less option to consider.</label>
+          <textarea id="rn-${c.id}" rows="2" placeholder="Optional"></textarea>
+          <div class="row"><button class="btn small primary" type="submit">Bring it back tonight</button><button class="btn small quiet" type="button" data-act="retryOpen" data-id="${c.id}">Cancel</button></div>
+        </form>` : ''}
+      </article>`).join('')}</div>`
+      : `<p class="empty">No cards to follow up on. After your next worry time, the answers you write will show up here in the morning.</p>`;
+
+    return `
+      <section class="stack">
+        <p class="eyebrow">${esc(new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }))}</p>
+        <h1>Follow up on last night’s cards</h1>
+        <p class="lead">These are the answers you wrote while you were thinking clearly. Do the things on your cards. If an answer doesn’t work, mark it and the card comes back tonight.</p>
+      </section>
+      <div class="two">
+        <section class="stack">
+          <div class="row" style="justify-content:space-between"><h2 style="font-size:var(--t-lg)">Today’s cards</h2>${set.length ? `<button class="btn small" data-act="copyList">Copy as a list</button>` : ''}</div>
+          ${ui.copyText != null ? `<div class="stack" style="gap:.4rem"><label class="hint" for="copyBox">Couldn’t copy automatically. The list is selected below; copy it from here.</label><textarea id="copyBox" class="copybox" readonly>${esc(ui.copyText)}</textarea></div>` : ''}
+          ${list}
+          ${doneToday.length ? `<div class="stack" style="gap:.5rem"><h3 style="font-size:1.05rem">Done today</h3><ul class="donelist">${doneToday.map(c => `<li><s>${esc(c.solution)}</s><button class="x" data-act="undoDone" data-id="${c.id}">Undo</button></li>`).join('')}</ul></div>` : ''}
+        </section>
+        <aside class="stack">
+          <div class="panel">
+            <h3>Last night, ${esc(fmtDay(ln))}</h3>
+            <p class="hint">A quick note each morning lets you test whether worry time helps you sleep.</p>
+            ${checkinForm(ln, false)}
+          </div>
+          <div class="panel">
+            <h3>Waiting for tonight</h3>
+            ${waiting.length ? `<ul class="donelist">${waiting.map(c => `<li><span style="color:var(--ink-2);overflow-wrap:anywhere;min-width:0">${esc(c.text)}</span></li>`).join('')}</ul>` : '<p class="hint">Nothing yet. Cards from the bedside card and answers that didn’t work end up here.</p>'}
+          </div>
+        </aside>
+      </div>`;
+  }
+
+  function viewBedside() {
+    const tk = tonightKey();
+    const handled = S.cards.filter(c => {
+      const s = c.sessionId && sessionById(c.sessionId);
+      return s && s.endedAt && s.nightKey === tk && (c.status === 'set' || c.status === 'done');
+    }).length;
+    const body = ui.bedsideSaved
+      ? `<p class="settled">It’s on the card.</p>
+         <p>You’ll deal with it tomorrow evening, when you’re thinking clearly. There’s nothing more to do with it tonight.</p>
+         <div class="row"><button class="btn" data-act="bedAnother">Add another</button></div>`
+      : `<h1>Bedside card</h1>
+         <p>Something on your mind? Put it on the card and leave it for tomorrow evening’s worry time. Nothing can be done about it at 3 A.M.</p>
+         <form class="stack" data-form="bedside" autocomplete="off">
+           <div class="icard"><div class="icard-head"><span class="tag">For tomorrow evening</span></div>
+             <div class="icard-lines" style="background:none"><label class="sr" for="bedText">The worry</label><textarea id="bedText" class="ruled-input" rows="4" placeholder="Write it down…"></textarea></div></div>
+           <div class="row"><button class="btn primary" type="submit">Put it on the card</button></div>
+         </form>`;
+    return `<section class="bedside">
+      ${body}
+      ${handled ? `<p>This evening you worked through ${plural(handled, 'worry', 'worries')}. Their answers are written down.</p>` : ''}
+      <p class="tiny">This screen stays dim on purpose. Your cards aren’t shown here, so there’s nothing to stir up.</p>
+    </section>`;
+  }
+
+  /* ---------- Log ---------- */
+  function nightsWindow(n = 14) {
+    const end = lastNightKey();
+    const rows = [];
+    for (let i = n - 1; i >= 0; i--) {
+      const key = shiftKey(end, -i);
+      const e = S.nights[key] || {};
+      const hadSession = S.sessions.some(s => s.endedAt && s.nightKey === key);
+      rows.push({ key, minutes: e.minutes ?? null, worry: e.worry ?? (hadSession ? true : null), cards: S.cards.filter(c => { const s = c.sessionId && sessionById(c.sessionId); return s && s.nightKey === key; }).length });
+    }
+    return rows;
+  }
+  function sampleRows() {
+    const end = lastNightKey();
+    const mins = [55, 40, 70, 45, 35, 60, 50, 35, 25, 30, 20, 40, 15, 20];
+    return mins.map((m, i) => ({ key: shiftKey(end, i - 13), minutes: m, worry: i >= 7, cards: 0 }));
+  }
+  function stats(rows) {
+    const w = rows.filter(r => r.minutes != null && r.worry === true), wo = rows.filter(r => r.minutes != null && r.worry === false);
+    const avg = a => a.length ? Math.round(a.reduce((s, r) => s + r.minutes, 0) / a.length) : null;
+    return { wN: w.length, woN: wo.length, wAvg: avg(w), woAvg: avg(wo) };
+  }
+
+  function viewLog() {
+    const all = Object.keys(S.nights).filter(k => S.nights[k].minutes != null).sort();
+    const real = nightsWindow();
+    const isSample = !real.some(r => r.minutes != null);
+    const rows = isSample ? sampleRows() : real;
+    const st = stats(isSample ? rows : all.map(k => ({ minutes: S.nights[k].minutes, worry: S.nights[k].worry })));
+    let verdict;
+    if (st.wN >= 3 && st.woN >= 3) {
+      const diff = st.woAvg - st.wAvg;
+      if (diff >= 10) verdict = `On nights with worry time you fell asleep about ${diff} minutes faster.`;
+      else if (diff <= -10) verdict = `So far you’ve fallen asleep about ${-diff} minutes slower on worry-time nights.`;
+      else verdict = 'No clear difference yet between nights with and without worry time.';
+    } else {
+      verdict = 'Log at least three nights with worry time and three without, then compare.';
+    }
+    const k = ui.logDraft ? ui.logDraft.key : lastNightKey();
+    const tableRows = isSample ? rows : all.slice().reverse().map(key => ({ key, minutes: S.nights[key].minutes, worry: S.nights[key].worry, cards: S.cards.filter(c => { const s = c.sessionId && sessionById(c.sessionId); return s && s.nightKey === key; }).length }));
+
+    return `
+      <section class="stack">
+        <p class="eyebrow">Your own experiment</p>
+        <h1>Is worry time helping you sleep?</h1>
+        <p class="lead">Hauri suggests trying worry time every evening for a week or two, then testing whether it helps. Compare how long it takes you to fall asleep on nights with and without it. If it helps, keep going. If it doesn’t, give it up. Some people only use it when life gets hectic.</p>
+      </section>
+      <div class="two">
+        <section class="stack">
+          <div class="row" style="justify-content:space-between;align-items:baseline">
+            <h2 style="font-size:var(--t-lg)">Minutes to fall asleep, last 14 nights</h2>
+            ${isSample ? '<span class="sample-flag">Sample data</span>' : ''}
+          </div>
+          <div class="legend">
+            <span><i class="k-with"></i>With worry time${st.wAvg != null ? ` · avg ${st.wAvg} min (${plural(st.wN, 'night')})` : ''}</span>
+            <span><i class="k-without"></i>Without${st.woAvg != null ? ` · avg ${st.woAvg} min (${plural(st.woN, 'night')})` : ''}</span>
+          </div>
+          <div class="chart ${isSample ? 'sample' : ''}" id="chart" role="img" aria-label="Column chart of minutes to fall asleep over the last 14 nights, colored by whether you did worry time"></div>
+          ${isSample ? '<p class="hint">This is made-up sample data to show how the chart works. Your own nights replace it as soon as you log one.</p>' : ''}
+          <p class="verdict">${esc(isSample ? 'Example: ' + verdict : verdict)}</p>
+          <p class="hint">A week or two of nights is a small sample, and other things affect sleep too. Treat this as a rough guide.</p>
+          <details class="plain">
+            <summary>Show as a table</summary>
+            <div class="tablewrap" style="margin-top:.75rem"><table>
+              <thead><tr><th>Night</th><th>Worry time</th><th>Minutes to sleep</th><th>Cards</th></tr></thead>
+              <tbody>${tableRows.length ? tableRows.map(r => `<tr><td>${esc(fmtDay(r.key))}</td><td>${r.worry === true ? 'Yes' : r.worry === false ? 'No' : '—'}</td><td>${r.minutes ?? '—'}</td><td>${r.cards || '—'}</td></tr>`).join('') : '<tr><td colspan="4">No nights logged yet.</td></tr>'}</tbody>
+            </table></div>
+          </details>
+        </section>
+        <aside class="stack">
+          <div class="panel"><h3>Log a night</h3>${checkinForm(k, true)}</div>
+          <div class="panel">
+            <h3>Your data</h3>
+            <p class="hint">${memoryOnly ? 'This browser isn’t letting the page save, so your cards will be lost when you close it.' : 'Everything stays in this browser on this device. Nothing is sent anywhere.'}</p>
+            ${ui.confirmClear
+              ? `<div class="notice warn"><p>Delete all cards, piles and sleep notes? This can’t be undone.</p><div class="row"><button class="btn small danger" data-act="clearAll">Delete everything</button><button class="btn small quiet" data-act="clearCancel">Cancel</button></div></div>`
+              : `<div class="row"><button class="btn small danger" data-act="clearAsk">Delete all data</button></div>`}
+          </div>
+        </aside>
+      </div>`;
+  }
+
+  function drawChart() {
+    const box = $('#chart');
+    if (!box) return;
+    const real = nightsWindow();
+    const isSample = !real.some(r => r.minutes != null);
+    const rows = isSample ? sampleRows() : real;
+    const W = Math.max(280, box.clientWidth), H = 230, m = { t: 14, r: 4, b: 30, l: 34 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const maxV = Math.max(60, ...rows.map(r => r.minutes || 0));
+    const stepV = maxV > 120 ? 60 : maxV > 60 ? 30 : 15;
+    const top = Math.ceil(maxV / stepV) * stepV;
+    const y = v => m.t + ih - (v / top) * ih;
+    const slot = iw / rows.length;
+    const bw = Math.min(24, slot * .62);
+    let g = '';
+    for (let v = 0; v <= top; v += stepV) {
+      g += `<line class="${v === 0 ? 'base' : 'gl'}" x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"></line>`;
+      g += `<text class="ax" x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    }
+    const every = slot < 26 ? 2 : 1;
+    let bars = '', hits = '';
+    rows.forEach((r, i) => {
+      const cx = m.l + slot * i + slot / 2;
+      const d = keyToDate(r.key);
+      if ((rows.length - 1 - i) % every === 0) g += `<text class="ax" x="${cx}" y="${H - 10}" text-anchor="middle">${d.getDate()}</text>`;
+      hits += `<rect class="hl" x="${m.l + slot * i}" y="${m.t}" width="${slot}" height="${ih}"></rect>`;
+      if (r.minutes != null && r.minutes > 0) {
+        const x = cx - bw / 2, y0 = y(r.minutes), h = y(0) - y0, rr = Math.min(4, h, bw / 2);
+        const cls = r.worry === true ? 'b-with' : r.worry === false ? 'b-without' : 'b-none';
+        bars += `<path class="${cls}" d="M${x},${y(0)}V${y0 + rr}Q${x},${y0} ${x + rr},${y0}H${x + bw - rr}Q${x + bw},${y0} ${x + bw},${y0 + rr}V${y(0)}Z"></path>`;
+      } else if (r.minutes == null) {
+        bars += `<circle class="b-none" cx="${cx}" cy="${y(0) - 4}" r="2.5"></circle>`;
+      }
+    });
+    box.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+      <g>${hits}</g><g>${g}</g><g class="bars">${bars}</g>
+      <g>${rows.map((r, i) => `<rect class="hit" data-i="${i}" x="${m.l + slot * i}" y="${m.t}" width="${slot}" height="${ih + m.b}"></rect>`).join('')}</g>
+    </svg><div class="tip" hidden></div>`;
+    const tip = $('.tip', box), hl = box.querySelectorAll('.hl');
+    box.querySelectorAll('.hit').forEach(el => {
+      el.addEventListener('pointerenter', () => {
+        const i = +el.dataset.i, r = rows[i];
+        hl.forEach((h, j) => h.classList.toggle('on', j === i));
+        const wt = r.worry === true ? 'Worry time' : r.worry === false ? 'No worry time' : 'Worry time not noted';
+        tip.textContent = `${fmtDay(r.key)} · ${r.minutes != null ? `${wt} · ${r.minutes} min` : 'Not logged'}${isSample ? ' (sample)' : ''}`;
+        tip.hidden = false;
+        const cx = m.l + slot * i + slot / 2;
+        const tw = tip.offsetWidth;
+        tip.style.left = Math.min(W - tw / 2, Math.max(tw / 2, cx)) + 'px';
+        tip.style.top = (r.minutes ? y(r.minutes) : y(0)) - 8 + 'px';
+      });
+      el.addEventListener('pointerleave', () => { tip.hidden = true; hl.forEach(h => h.classList.remove('on')); });
+    });
+  }
+
+  /* ===================== Router & render ===================== */
+  const VIEWS = { tonight: viewTonight, morning: viewMorning, bedside: viewBedside, log: viewLog };
+  let lastView = null;
+  function route() { const h = location.hash.slice(1); return VIEWS[h] ? h : 'tonight'; }
+  function render() {
+    const v = route();
+    if (v !== lastView) {
+      ui.confirmClear = false; ui.copyText = null; ui.confirmEnd = false;
+      if (v !== 'bedside') ui.bedsideSaved = false;
+      if (lastView === 'tonight' && ui.putaway) ui.putaway = null;
+    }
+    document.documentElement.classList.toggle('night', v === 'bedside');
+    document.querySelectorAll('.tabs a').forEach(a => a.setAttribute('aria-current', a.dataset.tab === v ? 'page' : 'false'));
+    const app = $('#app');
+    app.innerHTML = VIEWS[v]();
+    if (v !== lastView) window.scrollTo(0, 0);
+    lastView = v;
+    if (v === 'log') drawChart();
+    if (ui.focus) { const el = $(ui.focus); if (el) el.focus(); ui.focus = null; }
+    if (ui.copyText != null) { const cb = $('#copyBox'); if (cb) cb.select(); }
+    tick();
+  }
+
+  /* ===================== Timer ===================== */
+  function tick() {
+    const s = currentSession(), el = $('#clock');
+    if (!s || !el) return;
+    const sec = Math.max(0, Math.floor((Date.now() - s.startedAt) / 1000));
+    el.textContent = `${Math.floor(sec / 60)}:${pad(sec % 60)}`;
+    const over = sec >= SESSION_MIN * 60;
+    $('#timer').classList.toggle('over', over);
+    $('#clockNote').textContent = over ? 'Half an hour is up. Wrap up when ready.' : `of ${SESSION_MIN}:00`;
+  }
+  setInterval(tick, 1000);
+
+  /* ===================== Actions ===================== */
+  function startSession() {
+    let s = currentSession();
+    if (!s) {
+      s = { id: uid(), startedAt: Date.now(), endedAt: null, step: 1, maxStep: 1, nightKey: tonightKey() };
+      S.sessions.push(s);
+      S.current = s.id;
+      S.cards.filter(c => c.status === 'waiting').forEach(c => { c.status = 'active'; c.sessionId = s.id; });
+      ui.checks = {};
+    }
+    save(); render();
+  }
+  function goStep(n) {
+    const s = currentSession(); if (!s) return;
+    if (n === 4 && activeCards(s).some(c => !c.pile || !pileById(c.pile))) n = 3;
+    s.step = n; s.maxStep = Math.max(s.maxStep || 1, n);
+    if (n === 2) ui.focus = '#newCard';
+    save(); render(); $('#app').scrollIntoView({ block: 'start' });
+  }
+  function endSessionInto(s) {
+    s.endedAt = Date.now();
+    S.current = null;
+    S.nights[s.nightKey] = Object.assign({}, S.nights[s.nightKey], { worry: true });
+    ui.putaway = s.id;
+  }
+  function putAway() {
+    const s = currentSession(); if (!s) return;
+    activeCards(s).forEach(c => {
+      if (answered(c)) { c.status = 'set'; c.setAt = Date.now(); }
+      else { c.status = 'waiting'; }
+    });
+    endSessionInto(s);
+    save(); render(); window.scrollTo(0, 0);
+  }
+
+  const acts = {
+    start: startSession,
+    go: b => goStep(+b.dataset.step),
+    check: b => { ui.checks[b.dataset.k] = !ui.checks[b.dataset.k]; b.setAttribute('aria-pressed', ui.checks[b.dataset.k]); },
+    endAsk: () => { ui.confirmEnd = true; render(); },
+    endCancel: () => { ui.confirmEnd = false; render(); },
+    endSession: () => {
+      const s = currentSession(); if (!s) return;
+      activeCards(s).forEach(c => { c.status = 'waiting'; });
+      S.sessions = S.sessions.filter(x => x.id !== s.id || S.cards.some(c => c.sessionId === s.id && c.status !== 'waiting'));
+      S.cards.forEach(c => { if (c.sessionId === s.id && c.status === 'waiting') c.sessionId = null; });
+      S.current = null; ui.confirmEnd = false;
+      save(); render();
+    },
+    finishEmpty: () => { const s = currentSession(); if (!s) return; endSessionInto(s); save(); render(); },
+    delCard: b => { S.cards = S.cards.filter(c => c.id !== b.dataset.id); save(); ui.focus = '#newCard'; render(); },
+    toPile: b => {
+      const c = cardById(b.dataset.id); if (!c) return;
+      c.pile = b.dataset.pile;
+      if (!c.kind) c.kind = c.pile === 'todo' ? 'todo' : 'step';
+      save(); render();
+    },
+    unsort: b => { const c = cardById(b.dataset.id); if (c) { c.pile = null; save(); render(); } },
+    ideaPile: b => addPile(b.dataset.name),
+    delPile: b => { S.piles = S.piles.filter(p => p.id !== b.dataset.pile || p.fixed); save(); render(); },
+    kind: b => { const c = cardById(b.dataset.id); if (!c) return; c.kind = b.dataset.kind; save(); ui.focus = `#sol-${c.id}`; render(); },
+    phrase: b => {
+      const c = cardById(b.dataset.id); if (!c) return;
+      const p = CONTROL_PHRASES[+b.dataset.i];
+      c.solution = c.solution && c.solution.trim() ? c.solution.trim() + ' ' + p : p;
+      save(); ui.focus = `#sol-${c.id}`; render();
+      const ta = $(`#sol-${c.id}`); if (ta) ta.setSelectionRange(ta.value.length, ta.value.length);
+    },
+    stand: b => { const c = cardById(b.dataset.id); if (!c) return; c.worst.stand = c.worst.stand === b.dataset.v ? '' : b.dataset.v; c.worstOpen = true; save(); render(); },
+    putAway,
+    closePutaway: () => { ui.putaway = null; render(); },
+    markDone: b => { const c = cardById(b.dataset.id); if (!c) return; c.status = 'done'; c.doneAt = Date.now(); delete ui.retryOpen[c.id]; save(); render(); toast('Marked done'); },
+    undoDone: b => { const c = cardById(b.dataset.id); if (!c) return; c.status = 'set'; c.doneAt = null; save(); render(); },
+    retryOpen: b => { ui.retryOpen[b.dataset.id] = !ui.retryOpen[b.dataset.id]; if (ui.retryOpen[b.dataset.id]) ui.focus = `#rn-${b.dataset.id}`; render(); },
+    copyList: () => {
+      const set = S.cards.filter(c => c.status === 'set');
+      const text = 'Worry Time: today\n' + set.map(c => `☐ ${c.solution.trim()}  (${pileName(c.pile)}: ${c.text})`).join('\n');
+      const fallback = () => { ui.copyText = text; render(); };
+      try {
+        navigator.clipboard.writeText(text).then(() => toast('List copied'), fallback);
+      } catch (e) { fallback(); }
+    },
+    ciWorry: b => {
+      const form = b.closest('form');
+      ui.logDraft = Object.assign(draftFrom(form), { worry: b.dataset.v === '1' });
+      form.querySelectorAll('[data-act="ciWorry"]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    },
+    ciMinutes: b => { const inp = b.closest('form').querySelector('[data-field="ciMin"]'); inp.value = b.dataset.m; },
+    bedAnother: () => { ui.bedsideSaved = false; ui.focus = '#bedText'; render(); },
+    clearAsk: () => { ui.confirmClear = true; render(); },
+    clearCancel: () => { ui.confirmClear = false; render(); },
+    clearAll: () => { S = fresh(); ui.confirmClear = false; ui.logDraft = null; save(); render(); toast('All data deleted'); }
+  };
+
+  function draftFrom(form) {
+    const key = form.dataset.key;
+    const pressed = form.querySelector('[data-act="ciWorry"][aria-pressed="true"]');
+    const entry = S.nights[key] || {};
+    const min = form.querySelector('[data-field="ciMin"]').value;
+    return { key, worry: pressed ? pressed.dataset.v === '1' : (entry.worry ?? null), minutes: min };
+  }
+
+  function addPile(name) {
+    name = (name || '').trim();
+    if (!name) return;
+    if (S.piles.length >= MAX_PILES) { toast('Seven piles is the limit. Merge some instead.'); return; }
+    if (S.piles.some(p => p.name.toLowerCase() === name.toLowerCase())) { toast('You already have that pile'); return; }
+    S.piles.push({ id: uid(), name });
+    save(); ui.focus = '#pileName'; render();
+  }
+
+  const forms = {
+    addCard: () => {
+      const s = currentSession(); const ta = $('#newCard');
+      const text = ta.value.trim();
+      if (!s || !text) { ta.focus(); return; }
+      S.cards.push({ id: uid(), text, created: Date.now(), source: 'session', status: 'active', sessionId: s.id, pile: null, kind: null, solution: '', worst: {}, worstOpen: false, history: [] });
+      save(); ui.focus = '#newCard'; render();
+    },
+    addPile: () => addPile($('#pileName').value),
+    retry: f => {
+      const c = cardById(f.dataset.id); if (!c) return;
+      c.history.push({ solution: c.solution, kind: c.kind, note: f.querySelector('textarea').value.trim(), at: Date.now() });
+      c.solution = ''; c.status = 'waiting'; c.setAt = null; c.worstOpen = false;
+      delete ui.retryOpen[c.id];
+      save(); render(); toast('It’ll be in tonight’s pile');
+    },
+    bedside: () => {
+      const ta = $('#bedText'); const text = ta.value.trim();
+      if (!text) { ta.focus(); return; }
+      S.cards.push({ id: uid(), text, created: Date.now(), source: 'bedside', status: 'waiting', sessionId: null, pile: null, kind: null, solution: '', worst: {}, worstOpen: false, history: [] });
+      ui.bedsideSaved = true; save(); render();
+    },
+    checkin: f => {
+      const d = draftFrom(f);
+      const min = d.minutes === '' ? null : Math.max(0, Math.min(600, Math.round(+d.minutes)));
+      if (d.worry == null) { toast('Choose yes or no for worry time'); return; }
+      if (min == null || Number.isNaN(min)) { toast('Add your best guess in minutes'); f.querySelector('[data-field="ciMin"]').focus(); return; }
+      S.nights[d.key] = { worry: d.worry, minutes: min };
+      ui.logDraft = null;
+      save(); render(); toast('Night saved');
+    }
+  };
+
+  /* ===================== Event wiring ===================== */
+  const app = $('#app');
+  app.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b || !app.contains(b) || b.disabled) return;
+    const fn = acts[b.dataset.act];
+    if (fn) { e.preventDefault(); fn(b, e); }
+  });
+  app.addEventListener('submit', e => {
+    e.preventDefault();
+    const fn = forms[e.target.dataset.form];
+    if (fn) fn(e.target);
+  });
+  app.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && (e.target.id === 'newCard' || e.target.id === 'bedText')) {
+      e.preventDefault(); e.target.form.requestSubmit();
+    }
+  });
+  app.addEventListener('input', e => {
+    const t = e.target;
+    const f = t.dataset.field;
+    if (f === 'solution' || (f && f.startsWith('worst.'))) {
+      const c = cardById(t.dataset.id); if (!c) return;
+      if (f === 'solution') {
+        c.solution = t.value;
+        const s = currentSession();
+        if (s) {
+          const cards = activeCards(s), d = cards.filter(answered).length;
+          const p = $('#progress'); if (p) p.innerHTML = progressInner(d, cards.length);
+          const l = $('#leftHint'); if (l) l.textContent = leftHint(cards.length - d);
+        }
+      } else {
+        c.worst[f.slice(6)] = t.value;
+      }
+      saveSoon();
+    }
+  });
+  app.addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.setting) {
+      if (!t.value) return;
+      S.settings[t.dataset.setting] = t.value; save(); render();
+    } else if (t.id === 'logDate' && t.value) {
+      const e2 = S.nights[t.value];
+      ui.logDraft = e2 ? { key: t.value, worry: e2.worry, minutes: e2.minutes }
+        : { key: t.value, worry: S.sessions.some(s => s.endedAt && s.nightKey === t.value) ? true : null, minutes: '' };
+      render();
+    }
+  });
+  app.addEventListener('toggle', e => {
+    const d = e.target;
+    if (d.classList && d.classList.contains('worst')) { const c = cardById(d.dataset.id); if (c) { c.worstOpen = d.open; saveSoon(); } }
+  }, true);
+  window.addEventListener('hashchange', render);
+  window.addEventListener('beforeunload', save);
+  let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (route() === 'log') drawChart(); }, 120); });
+
+  render();
+})();
+</script>
+</body>
+</html>
