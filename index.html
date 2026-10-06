@@ -257,6 +257,15 @@ main > * + * { margin-top: 2.5rem; }
 .sort-top .icard .worry { font-size: 1.4rem; }
 .pile-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
 .pile-buttons .btn { border-radius: 8px; }
+.pb { position: relative; display: inline-flex; }
+.pb .static { cursor: default; border-style: dashed; }
+.pb .static:hover { background: transparent; }
+.pb .pile-del {
+  position: absolute; top: -.6rem; right: -.6rem; width: 1.5rem; height: 1.5rem; font-size: 1rem;
+  background: var(--surface); border: 1px solid var(--line); color: var(--muted); box-shadow: 0 1px 2px var(--shadow);
+}
+.pb:hover .pile-del, .pb:focus-within .pile-del { opacity: 1; }
+.pb .pile-del:hover { background: var(--rule-red); border-color: var(--rule-red); color: var(--card); }
 .add-pile { display: flex; gap: .5rem; flex-wrap: wrap; }
 .add-pile input { font: inherit; flex: 1 1 10rem; min-width: 0; padding: .55rem .75rem; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
 .piles { display: flex; flex-direction: column; gap: 1rem; }
@@ -268,8 +277,7 @@ main > * + * { margin-top: 2.5rem; }
   border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer;
   opacity: 0; transition: opacity .15s ease, background-color .15s ease;
 }
-.pile:hover .pile-del, .pile:focus-within .pile-del, .pile-del:focus-visible { opacity: 1; }
-.pile-del:hover { background: color-mix(in srgb, var(--rule-red) 18%, transparent); color: var(--ink); }
+.pile-del:focus-visible { opacity: 1; }
 @media (hover: none) { .pile-del { opacity: 1; } }
 .pile-cards { display: flex; flex-wrap: wrap; gap: .4rem; }
 .pcard {
@@ -426,7 +434,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
   const fresh = () => ({
     v: 1,
     settings: { worryAt: '19:30', bedAt: '23:00' },
-    piles: [{ id: 'todo', name: 'Little things', fixed: true }],
+    piles: [{ id: 'todo', name: 'Little things' }],
     cards: [],
     sessions: [],
     nights: {},
@@ -438,7 +446,6 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const d = Object.assign(fresh(), JSON.parse(raw));
-        if (!d.piles.some(p => p.id === 'todo')) d.piles.unshift({ id: 'todo', name: 'Little things', fixed: true });
         return d;
       }
     } catch (e) { memoryOnly = true; }
@@ -466,7 +473,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     'I will not deal with this worry today.',
     'I’ll deal with this when '
   ];
-  const PILE_IDEAS = ['Money', 'Work', 'Family', 'Health', 'Home', 'Relationships', 'Big ones'];
+  const PILE_IDEAS = ['Little things', 'Money', 'Work', 'Family', 'Health', 'Home', 'Relationships', 'Big ones'];
   const MAX_PILES = 7;
   const SESSION_MIN = 30;
 
@@ -714,9 +721,14 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
         <div class="sort-top">
           ${top ? `
             <div class="icard"><div class="icard-head"><span class="tag">${plural(unsorted.length, 'card')} to sort</span><p class="worry editable" ${editAttrs(top)}>${esc(top.text)}</p></div><div class="icard-lines" style="height:3.6rem"></div></div>
-            <p class="hint">Which pile does this go in?</p>
-            <div class="pile-buttons">${S.piles.map(p => `<button class="btn" data-act="toPile" data-id="${top.id}" data-pile="${p.id}">${esc(p.name)}</button>`).join('')}</div>`
+            <p class="hint">Which pile does this go in?</p>`
           : `<div class="notice ok"><strong>All cards are sorted.</strong><p>Next, write an answer on each one.</p></div>`}
+          ${S.piles.length ? `<div class="pile-buttons">${S.piles.map(p => {
+            const n = cards.filter(c => c.pile === p.id).length;
+            return `<span class="pb">${top
+              ? `<button class="btn" data-act="toPile" data-id="${top.id}" data-pile="${p.id}">${esc(p.name)}</button>`
+              : `<span class="btn static">${esc(p.name)}</span>`}<button class="pile-del" data-act="delPile" data-pile="${p.id}" title="Delete pile${n ? ' and re-sort its cards' : ''}" aria-label="Delete pile ${esc(p.name)}${n ? ` and send its ${plural(n, 'card')} back to be sorted` : ''}">×</button></span>`;
+          }).join('')}</div>` : `<p class="hint">Add a pile below to start sorting.</p>`}
           <form class="add-pile" data-form="addPile">
             <label class="sr" for="pileName">New pile name</label>
             <input id="pileName" maxlength="24" placeholder="${canAdd ? 'New pile' : 'Seven piles is the limit'}" ${canAdd ? '' : 'disabled'}>
@@ -728,7 +740,7 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
           ${S.piles.map(p => {
             const pc = cards.filter(c => c.pile === p.id);
             return `<div class="pile">
-              <div class="pile-head"><h3>${esc(p.name)}</h3><span class="row" style="gap:.25rem"><span class="hint">${pc.length}</span>${!p.fixed ? `<button class="pile-del" data-act="delPile" data-pile="${p.id}" title="Delete pile${pc.length ? ' and re-sort its cards' : ''}" aria-label="Delete pile ${esc(p.name)}${pc.length ? ` and send its ${plural(pc.length, 'card')} back to be sorted` : ''}">×</button>` : '<span class="pile-del" aria-hidden="true" style="visibility:hidden"></span>'}</span></div>
+              <div class="pile-head"><h3>${esc(p.name)}</h3><span class="hint">${pc.length}</span></div>
               ${pc.length ? `<div class="pile-cards">${pc.map(c => `<span class="pcard"><span class="editable" ${editAttrs(c)}>${esc(c.text)}</span><button class="x" data-act="unsort" data-id="${c.id}" aria-label="Move to another pile: ${esc(c.text)}">Move</button></span>`).join('')}</div>` : ''}
             </div>`;
           }).join('')}
@@ -1129,13 +1141,13 @@ details.plain summary { cursor: pointer; font-size: var(--t-sm); color: var(--pe
     toPile: b => {
       const c = cardById(b.dataset.id); if (!c) return;
       c.pile = b.dataset.pile;
-      if (!c.kind) c.kind = c.pile === 'todo' ? 'todo' : 'step';
+      if (!c.kind || !answered(c)) c.kind = c.pile === 'todo' || /^little/i.test(pileName(c.pile)) ? 'todo' : 'step';
       save(); render();
     },
     unsort: b => { const c = cardById(b.dataset.id); if (c) { c.pile = null; save(); render(); } },
     ideaPile: b => addPile(b.dataset.name),
     delPile: b => {
-      const pile = pileById(b.dataset.pile); if (!pile || pile.fixed) return;
+      const pile = pileById(b.dataset.pile); if (!pile) return;
       const s = currentSession();
       const back = s ? activeCards(s).filter(c => c.pile === pile.id).length : 0;
       // Every card that pointed at this pile goes back to unsorted, including ones from earlier sessions.
